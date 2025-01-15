@@ -37,12 +37,17 @@ class ChatManager:
             tools = self.mcp_client.get_available_tools() if self.mcp_client else []
             
             # First pass - send message with tools context
-            response = self.current_api.send_message(
+            response_stream = self.current_api.send_message(
                 f"Available tools: {tools}\n\nUser message: {user_input}"
             )
             
+            # Collect the full response from the stream
+            full_response = ""
+            async for chunk in response_stream:
+                full_response += chunk
+            
             # Check if response indicates tool use
-            if "I would like to use the tool" in response:
+            if "I would like to use the tool" in full_response:
                 # Parse tool name and args from response
                 # This is a simple example - you may want more robust parsing
                 tool_name = response.split("use the tool")[1].split("with")[0].strip()
@@ -61,10 +66,14 @@ class ChatManager:
                         await self.display.show_response(formatted_result, stream=True)
                     
                     # Send results back to model without showing to user
-                    response = self.current_api.send_message(
+                    response_stream = self.current_api.send_message(
                         f"Tool results: {tool_result}\nContinue the conversation with the user."
                     )
-            return response
+                    # Collect the full response
+                    full_response = ""
+                    async for chunk in response_stream:
+                        full_response += chunk
+            return full_response
         return "No API selected. Use /api <name> to select an API."
                                                                                                             
     def handle_command(self, command):
