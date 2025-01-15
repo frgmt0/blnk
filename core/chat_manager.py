@@ -4,11 +4,12 @@ from apis.base_api import BaseAPI
 from utils.mcp_client import MCPClient
                                                                                                             
 class ChatManager:                                                                                             
-    def __init__(self, config=None):                                                                                        
+    def __init__(self, config=None, display=None):                                                                                        
         self.apis = {}                                                                                         
         self.current_api = None
         self.config = config
         self.mcp_client = None
+        self.display = display
         asyncio.run(self.initialize_tools())
         
     async def initialize_tools(self):
@@ -28,7 +29,7 @@ class ChatManager:
             if self.config and self.config['default_api'] == name:
                 self.current_api = api_instance
                                                                                                             
-    def process_input(self, user_input):                                                                       
+    async def process_input(self, user_input):                                                                       
         if user_input.startswith('/'):                                                                         
             return self.handle_command(user_input[1:])                                                         
                                                                                                             
@@ -49,7 +50,7 @@ class ChatManager:
                 tool_args = response.split("with arguments")[1].strip()
                 
                 # Show thinking animation while executing tool
-                with display.show_thinking():
+                with self.display.show_thinking():
                     # Execute tool
                     tool_result = asyncio.run(self.mcp_client.run_tool(tool_name, tool_args))
                     
@@ -58,7 +59,7 @@ class ChatManager:
                         from utils.mcp_formatter import MCPFormatter
                         formatted_result = MCPFormatter.format_thought(tool_result)
                         # Stream the formatted thoughts
-                        await display.show_response(formatted_result, stream=True)
+                        await self.display.show_response(formatted_result, stream=True)
                     
                     # Send results back to model without showing to user
                     response = self.current_api.send_message(

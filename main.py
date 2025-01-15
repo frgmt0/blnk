@@ -1,4 +1,5 @@
 import os
+import asyncio
 from colorama import init, Fore, Back, Style
 from core.chat_manager import ChatManager
 from ui.display import Display
@@ -8,14 +9,14 @@ from apis.gemini_api import GeminiAPI
 from dotenv import load_dotenv
 from utils.config_loader import ConfigLoader
                                                                                                                 
-def main():                                                                                                    
+async def main():                                                                                                    
     init()  # Initialize colorama                                                                              
     display = Display()                                                                                        
     load_dotenv()  # Load environment variables
     
     # Load configuration
     config = ConfigLoader.load_config()
-    chat_manager = ChatManager(config)
+    chat_manager = ChatManager(config, display)
     
     # Only register APIs with available keys
     if os.getenv("OPENAI_API_KEY"):
@@ -40,5 +41,5 @@ def main():
             print("\nGoodbye!")                                                                                
             break                                                                                              
                                                                                                                 
-if __name__ == "__main__":                                                                                     
-    main()                                                                                                     
+if __name__ == "__main__":
+    asyncio.run(main())
