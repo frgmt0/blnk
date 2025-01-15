@@ -62,21 +62,25 @@ class ChatManager:
         cmd = parts[0].lower()
 
         if cmd == 'help':
-            help_text = f"""
-Available Commands:
-  /help           Show this help message
-  /apis           List available AI providers
-  /use <api>      Switch to specified AI provider
-  /model-list     Show available models for current/all providers
-  /switch-model   Switch to a different model for current provider
-  /exit           Exit the application
-  exit            Exit the application (alternative)
-  /tools          List available MCP tools and their descriptions
+            help_text = """
+# Available Commands
 
-Examples:
-  /use openai             Switch to OpenAI provider
-  /switch-model gpt-4o    Switch to GPT-4 model
-  /tools                  Show available tools
+## Basic Commands
+- `/help` - Show this help message
+- `/apis` - List available AI providers
+- `/use <api>` - Switch to specified AI provider
+- `/model-list` - Show available models for current/all providers
+- `/switch-model` - Switch to a different model for current provider
+- `/exit` - Exit the application
+- `exit` - Exit the application (alternative)
+- `/tools` - List available MCP tools and their descriptions
+
+## Examples
+```
+/use openai             # Switch to OpenAI provider
+/switch-model gpt-4o    # Switch to GPT-4 model
+/tools                  # Show available tools
+```
 """
             return help_text
         elif cmd == 'apis':
@@ -101,47 +105,45 @@ Examples:
     def show_available_tools(self):
         """Display all available MCP tools"""
         if not self.mcp_client:
-            return "MCP client not initialized"
+            return "# MCP client not initialized"
             
         tools = self.mcp_client.get_available_tools()
         if not tools:
-            return "No tools available"
+            return "# No tools available"
             
-        result = "Available MCP Tools:\n"
+        result = "# Available MCP Tools\n\n"
         for tool in tools:
             if isinstance(tool, tuple):
                 name, details = tool
-                result += f"\n{name}:"
+                result += f"## {name}\n"
                 if isinstance(details, dict):
                     if 'description' in details:
-                        result += f"\n  Description: {details['description']}"
+                        result += f"*{details['description']}*\n\n"
                     if 'parameters' in details:
-                        result += f"\n  Parameters: {details['parameters']}"
+                        result += "### Parameters\n```json\n"
+                        result += f"{json.dumps(details['parameters'], indent=2)}\n```\n"
             else:
-                result += f"\n{str(tool)}"
-            result += "\n"
+                result += f"## {str(tool)}\n"
         return result
 
     def show_available_apis(self):
         if not self.apis:
-            return "No APIs configured. Please add API keys to your .env file."
-        return "Available APIs:\n" + "\n".join(f"  {name}" for name in self.apis.keys())
+            return "# No APIs configured\nPlease add API keys to your `.env` file."
+        return "# Available APIs\n" + "\n".join(f"- {name}" for name in self.apis.keys())
 
     def show_models(self):
         if not self.apis:
-            return "No APIs available. Please add API keys to your .env file."
+            return "# No APIs available\nPlease add API keys to your `.env` file."
             
         if not self.current_api:
-            # Show all available APIs and their models
-            result = "Available models for all configured APIs:\n"
+            result = "# Available models for all configured APIs\n"
             for api in self.apis.values():
-                result += f"\n{api.get_name().upper()}:\n"
-                result += "\n".join(f"  {model}" for model in api.get_available_models())
+                result += f"\n## {api.get_name().upper()}\n"
+                result += "\n".join(f"- {model}" for model in api.get_available_models())
             return result
         
-        # Show models for current API
         models = self.current_api.get_available_models()
-        return f"Available models for {self.current_api.get_name()}:\n" + "\n".join(f"  {model}" for model in models)
+        return f"# Available models for {self.current_api.get_name()}\n" + "\n".join(f"- {model}" for model in models)
         
     def switch_model(self, model_name):
         if not self.current_api:

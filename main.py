@@ -29,7 +29,7 @@ def main():
                                                                                                                 
     while True:                                                                                                
         try:                                                                                                   
-            user_input = input(f"{Fore.GREEN}blnk>{Style.RESET_ALL} ")                                         
+            user_input = display.show_input_prompt()
             if user_input.lower() == 'exit':                                                                   
                 break                                                                                          
                                                                                                                 
