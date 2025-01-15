@@ -23,19 +23,41 @@ class ChatManager:
 
         if cmd == 'help':
             return self.show_help()
+        elif cmd == 'apis':
+            return self.show_available_apis()
         elif cmd == 'model-list':
             return self.show_models()
         elif cmd == 'switch-model' and len(parts) > 1:
             return self.switch_model(' '.join(parts[1:]))
+        elif cmd == 'use' and len(parts) > 1:
+            api_name = parts[1].lower()
+            if api_name in self.apis:
+                self.current_api = self.apis[api_name]
+                return f"Switched to {api_name} API"
+            return f"API '{api_name}' not available. Use /apis to see available APIs."
 
         return f"Unknown command: {cmd}"
 
+    def show_available_apis(self):
+        if not self.apis:
+            return "No APIs configured. Please add API keys to your .env file."
+        return "Available APIs:\n" + "\n".join(f"  {name}" for name in self.apis.keys())
+
     def show_models(self):
+        if not self.apis:
+            return "No APIs available. Please add API keys to your .env file."
+            
         if not self.current_api:
-            return "No API selected. Please select an API first."
+            # Show all available APIs and their models
+            result = "Available models for all configured APIs:\n"
+            for api in self.apis.values():
+                result += f"\n{api.get_name().upper()}:\n"
+                result += "\n".join(f"  {model}" for model in api.get_available_models())
+            return result
         
+        # Show models for current API
         models = self.current_api.get_available_models()
-        return f"Available models for {self.current_api.get_name()}:\n" + "\n".join(models)
+        return f"Available models for {self.current_api.get_name()}:\n" + "\n".join(f"  {model}" for model in models)
         
     def switch_model(self, model_name):
         if not self.current_api:

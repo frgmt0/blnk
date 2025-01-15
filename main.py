@@ -12,9 +12,14 @@ def main():
     load_dotenv()  # Load environment variables
     
     chat_manager = ChatManager()
-    chat_manager.register_api("openai", OpenAIAPI())
-    chat_manager.register_api("anthropic", AnthropicAPI())
-    chat_manager.register_api("gemini", GeminiAPI())
+    
+    # Only register APIs with available keys
+    if os.getenv("OPENAI_API_KEY"):
+        chat_manager.register_api("openai", OpenAIAPI())
+    if os.getenv("ANTHROPIC_API_KEY"):
+        chat_manager.register_api("anthropic", AnthropicAPI())
+    if os.getenv("GOOGLE_API_KEY"):
+        chat_manager.register_api("gemini", GeminiAPI())
                                                                                                                 
     display.show_welcome()                                                                                     
                                                                                                                 

@@ -5,7 +5,8 @@ class Display:
         print(f"""                                                                                             
 {Colors.PRIMARY}Welcome to blnk!{Colors.RESET}                                                                 
 {Colors.SECONDARY}A modular terminal chat application{Colors.RESET}                                            
-Type 'help' for available commands                                                                             
+Use /apis to see available APIs
+Type /help for available commands                                                                             
 """)                                                                                                           
                                                                                                             
     def show_response(self, response):                                                                         
