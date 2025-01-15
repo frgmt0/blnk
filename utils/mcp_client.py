@@ -32,7 +32,8 @@ class MCPClient:
         try:
             async with self.get_session() as session:
                 await session.initialize()
-                self.tools = await session.list_tools()
+                tools_response = await session.list_tools()
+                self.tools = tools_response.tools if hasattr(tools_response, 'tools') else []
                 return True
         except FileNotFoundError as e:
             print(f"Error: Could not start MCP server - {str(e)}")

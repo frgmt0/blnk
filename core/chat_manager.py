@@ -87,11 +87,16 @@ Examples:
             
         result = "Available MCP Tools:\n"
         for tool in tools:
-            result += f"\n{tool.name}:"
-            if hasattr(tool, 'description'):
-                result += f"\n  Description: {tool.description}"
-            if hasattr(tool, 'parameters'):
-                result += f"\n  Parameters: {tool.parameters}"
+            if isinstance(tool, tuple):
+                name, details = tool
+                result += f"\n{name}:"
+                if isinstance(details, dict):
+                    if 'description' in details:
+                        result += f"\n  Description: {details['description']}"
+                    if 'parameters' in details:
+                        result += f"\n  Parameters: {details['parameters']}"
+            else:
+                result += f"\n{str(tool)}"
             result += "\n"
         return result
 
