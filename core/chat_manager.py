@@ -46,10 +46,12 @@ Available Commands:
   /switch-model   Switch to a different model for current provider
   /exit           Exit the application
   exit            Exit the application (alternative)
+  /tools          List available MCP tools and their descriptions
 
 Examples:
   /use openai             Switch to OpenAI provider
   /switch-model gpt-4o    Switch to GPT-4 model
+  /tools                  Show available tools
 """
             return help_text
         elif cmd == 'apis':
@@ -66,8 +68,28 @@ Examples:
             return f"API '{api_name}' not available. Use /apis to see available APIs."
         elif cmd == 'exit':
             raise KeyboardInterrupt
+        elif cmd == 'tools':
+            return self.show_available_tools()
 
         return f"Unknown command: {cmd}"
+
+    def show_available_tools(self):
+        if not self.current_api:
+            return "No API selected. Please select an API first with /use <api_name>"
+            
+        tools = self.current_api.get_available_tools()
+        if not tools:
+            return "No tools available for the current API"
+            
+        result = "Available MCP Tools:\n"
+        for tool in tools:
+            result += f"\n{tool['name']}:"
+            if 'description' in tool:
+                result += f"\n  Description: {tool['description']}"
+            if 'parameters' in tool:
+                result += f"\n  Parameters: {tool['parameters']}"
+            result += "\n"
+        return result
 
     def show_available_apis(self):
         if not self.apis:
