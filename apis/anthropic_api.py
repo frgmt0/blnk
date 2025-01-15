@@ -5,6 +5,7 @@ from config.models import ANTHROPIC_MODELS
 
 class AnthropicAPI(BaseAPI):
     def __init__(self):
+        super().__init__()  # Initialize BaseAPI
         self.client = Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
         self.model = ANTHROPIC_MODELS[0]
         

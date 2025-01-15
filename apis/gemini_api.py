@@ -5,6 +5,7 @@ from config.models import GEMINI_MODELS
 
 class GeminiAPI(BaseAPI):
     def __init__(self):
+        super().__init__()  # Initialize BaseAPI
         genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
         self.model_name = GEMINI_MODELS[0]
         self.model = genai.GenerativeModel(self.model_name)

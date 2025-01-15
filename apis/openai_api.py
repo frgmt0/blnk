@@ -5,6 +5,7 @@ from config.models import OPENAI_MODELS
 
 class OpenAIAPI(BaseAPI):
     def __init__(self):
+        super().__init__()  # Initialize BaseAPI
         self.client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
         self.model = OPENAI_MODELS[0]
         

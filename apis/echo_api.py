@@ -1,6 +1,9 @@
 from .base_api import BaseAPI                                                                                  
                                                                                                             
-class EchoAPI(BaseAPI):                                                                                        
+class EchoAPI(BaseAPI):
+    def __init__(self):
+        super().__init__()  # Initialize BaseAPI
+                                                                                        
     def send_message(self, message):                                                                           
         return f"Echo: {message}"                                                                              
                                                                                                             
