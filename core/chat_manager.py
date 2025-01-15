@@ -13,8 +13,7 @@ class ChatManager:
     async def initialize_tools(self):
         """Initialize MCP client and load available tools"""
         self.mcp_client = MCPClient()
-        if await self.mcp_client.connect():
-            await self.mcp_client.refresh_tools()
+        await self.mcp_client.connect()
                                                                                                             
     def register_api(self, name, api_instance):                                                                
         if isinstance(api_instance, BaseAPI):                                                                  
