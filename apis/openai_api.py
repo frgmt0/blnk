@@ -9,7 +9,7 @@ class OpenAIAPI(BaseAPI):
         self.client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
         self.model = OPENAI_MODELS[0]
         
-    def send_message(self, message):
+    async def send_message(self, message):
         try:
             response = self.client.chat.completions.create(
                 model=self.model,

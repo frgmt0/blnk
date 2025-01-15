@@ -4,7 +4,7 @@ class EchoAPI(BaseAPI):
     def __init__(self):
         super().__init__()  # Initialize BaseAPI
                                                                                         
-    def send_message(self, message):                                                                           
+    async def send_message(self, message):                                                                           
         return f"Echo: {message}"                                                                              
                                                                                                             
     def get_name(self):                                                                                        

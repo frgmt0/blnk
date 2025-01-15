@@ -10,7 +10,7 @@ class GeminiAPI(BaseAPI):
         self.model_name = GEMINI_MODELS[0]
         self.model = genai.GenerativeModel(self.model_name)
         
-    def send_message(self, message):
+    async def send_message(self, message):
         try:
             response = self.model.generate_content(message)
             return response.text

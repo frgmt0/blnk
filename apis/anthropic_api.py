@@ -9,7 +9,7 @@ class AnthropicAPI(BaseAPI):
         self.client = Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
         self.model = ANTHROPIC_MODELS[0]
         
-    def send_message(self, message, tools=None):
+    async def send_message(self, message, tools=None):
         """Send a message to the Anthropic API
         
         Args:
@@ -30,15 +30,14 @@ class AnthropicAPI(BaseAPI):
                 stream=True
             )
             
-            # Return async generator for streaming
-            async def stream_response():
-                async for chunk in response:
-                    if chunk.type == "content_block_delta":
+            async def generate():
+                for chunk in response:
+                    if hasattr(chunk, 'content'):
+                        yield chunk.content[0].text
+                    elif hasattr(chunk, 'delta') and chunk.delta.text:
                         yield chunk.delta.text
-                    elif chunk.type == "message_delta" and chunk.delta.stop_reason:
-                        break
                         
-            return stream_response()
+            return generate()
         except Exception as e:
             return f"Anthropic API Error: {str(e)}"
             
