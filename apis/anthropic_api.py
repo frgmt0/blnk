@@ -31,9 +31,11 @@ class AnthropicAPI(BaseAPI):
             )
             
             # Handle streaming response
-            for chunk in response:
-                if chunk.content:
-                    yield chunk.content[0].text
+            async for chunk in response:
+                if hasattr(chunk, 'delta') and chunk.delta.text:
+                    yield chunk.delta.text
+                elif hasattr(chunk, 'content'):
+                    yield chunk.content
         except Exception as e:
             yield f"Anthropic API Error: {str(e)}"
             
