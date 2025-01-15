@@ -6,13 +6,16 @@ from apis.openai_api import OpenAIAPI
 from apis.anthropic_api import AnthropicAPI
 from apis.gemini_api import GeminiAPI
 from dotenv import load_dotenv
+from utils.config_loader import ConfigLoader
                                                                                                                 
 def main():                                                                                                    
     init()  # Initialize colorama                                                                              
     display = Display()                                                                                        
     load_dotenv()  # Load environment variables
     
-    chat_manager = ChatManager()
+    # Load configuration
+    config = ConfigLoader.load_config()
+    chat_manager = ChatManager(config)
     
     # Only register APIs with available keys
     if os.getenv("OPENAI_API_KEY"):

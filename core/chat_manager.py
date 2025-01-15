@@ -1,13 +1,22 @@
 from apis.base_api import BaseAPI                                                                              
                                                                                                             
 class ChatManager:                                                                                             
-    def __init__(self):                                                                                        
+    def __init__(self, config=None):                                                                                        
         self.apis = {}                                                                                         
-        self.current_api = None                                                                                
+        self.current_api = None
+        self.config = config
                                                                                                             
     def register_api(self, name, api_instance):                                                                
         if isinstance(api_instance, BaseAPI):                                                                  
-            self.apis[name] = api_instance                                                                     
+            self.apis[name] = api_instance
+            
+            # Set default model if configured
+            if self.config and name in self.config['default_models']:
+                api_instance.set_model(self.config['default_models'][name])
+                
+            # Set as current API if it's the default
+            if self.config and self.config['default_api'] == name:
+                self.current_api = api_instance
                                                                                                             
     def process_input(self, user_input):                                                                       
         if user_input.startswith('/'):                                                                         
