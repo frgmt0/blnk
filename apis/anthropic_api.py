@@ -26,7 +26,8 @@ class AnthropicAPI(BaseAPI):
             response = self.client.messages.create(
                 model=self.model,
                 max_tokens=1000,
-                messages=messages
+                messages=messages,
+                stream=True
             )
             
             return response.content[0].text
