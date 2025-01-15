@@ -38,7 +38,7 @@ class ChatManager:
             
             # First pass - send message with tools context
             full_response = ""
-            async for chunk in await self.current_api.send_message(
+            async for chunk in self.current_api.send_message(
                 f"Available tools: {tools}\n\nUser message: {user_input}"
             ):
                 full_response += chunk
@@ -65,7 +65,7 @@ class ChatManager:
                     # Send results back to model without showing to user
                     # Collect the full response
                     full_response = ""
-                    async for chunk in await self.current_api.send_message(
+                    async for chunk in self.current_api.send_message(
                         f"Tool results: {tool_result}\nContinue the conversation with the user."
                     ):
                         full_response += chunk
