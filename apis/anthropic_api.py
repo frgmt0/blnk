@@ -33,8 +33,8 @@ class AnthropicAPI(BaseAPI):
             # Handle streaming response
             async for message in stream:
                 if message.type == "message_delta":
-                    if message.delta.text:
-                        yield message.delta.text
+                    if message.delta.value:
+                        yield message.delta.value
         except Exception as e:
             yield f"Anthropic API Error: {str(e)}"
             
