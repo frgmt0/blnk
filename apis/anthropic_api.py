@@ -1,12 +1,12 @@
 import os
-from anthropic import Anthropic
+from anthropic import AsyncAnthropic
 from .base_api import BaseAPI
 from config.models import ANTHROPIC_MODELS
 
 class AnthropicAPI(BaseAPI):
     def __init__(self):
         super().__init__()  # Initialize BaseAPI
-        self.client = Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
+        self.client = AsyncAnthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
         self.model = ANTHROPIC_MODELS[0]
         
     async def send_message(self, message, tools=None):
@@ -23,7 +23,7 @@ class AnthropicAPI(BaseAPI):
             if isinstance(message, str) and "Tool results:" in message:
                 messages = [{"role": "user", "content": message}]
             
-            response = self.client.messages.create(
+            stream = await self.client.messages.create(
                 model=self.model,
                 max_tokens=1000,
                 messages=messages,
@@ -31,11 +31,9 @@ class AnthropicAPI(BaseAPI):
             )
             
             # Handle streaming response
-            async for chunk in response:
-                if hasattr(chunk, 'delta') and chunk.delta.text:
+            async for chunk in stream:
+                if chunk.type == "content_block_delta":
                     yield chunk.delta.text
-                elif hasattr(chunk, 'content'):
-                    yield chunk.content
         except Exception as e:
             yield f"Anthropic API Error: {str(e)}"
             
