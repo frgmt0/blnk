@@ -43,7 +43,7 @@ Type `/help` for detailed command information
         try:
             if isinstance(response, str):
                 md = Markdown(response)
-                self.console.print(Panel(md, border_style="cyan"))
+                self.console.print(md)
             else:
                 # Handle streaming response
                 with self.console.status("[cyan]Thinking...", spinner="dots"):
@@ -52,7 +52,7 @@ Type `/help` for detailed command information
                         if chunk:
                             current_text += chunk
                             self.console.clear()
-                            self.console.print(Panel(Markdown(current_text), border_style="cyan"))
+                            self.console.print(Markdown(current_text))
         except Exception as e:
             # Fallback to plain text
             self.console.print(Panel(str(response), border_style="cyan"))
