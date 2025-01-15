@@ -1,5 +1,6 @@
 import asyncio
-from apis.base_api import BaseAPI                                                                              
+from apis.base_api import BaseAPI
+from utils.mcp_client import MCPClient
                                                                                                             
 class ChatManager:                                                                                             
     def __init__(self, config=None):                                                                                        
