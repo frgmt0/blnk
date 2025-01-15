@@ -48,13 +48,22 @@ class ChatManager:
                 tool_name = response.split("use the tool")[1].split("with")[0].strip()
                 tool_args = response.split("with arguments")[1].strip()
                 
-                # Execute tool
-                tool_result = asyncio.run(self.mcp_client.run_tool(tool_name, tool_args))
-                
-                # Second pass - send tool results back to model
-                response = self.current_api.send_message(
-                    f"Tool results: {tool_result}\nContinue the conversation with the user."
-                )
+                # Show thinking animation while executing tool
+                with display.show_thinking():
+                    # Execute tool
+                    tool_result = asyncio.run(self.mcp_client.run_tool(tool_name, tool_args))
+                    
+                    # Format MCP reasoner output if applicable
+                    if tool_name == "mcp-reasoner":
+                        from utils.mcp_formatter import MCPFormatter
+                        formatted_result = MCPFormatter.format_thought(tool_result)
+                        # Stream the formatted thoughts
+                        await display.show_response(formatted_result, stream=True)
+                    
+                    # Send results back to model without showing to user
+                    response = self.current_api.send_message(
+                        f"Tool results: {tool_result}\nContinue the conversation with the user."
+                    )
             return response
         return "No API selected. Use /api <name> to select an API."
                                                                                                             

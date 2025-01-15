@@ -33,8 +33,8 @@ def main():
             if user_input.lower() == 'exit':                                                                   
                 break                                                                                          
                                                                                                                 
-            response = chat_manager.process_input(user_input)                                                  
-            display.show_response(response)                                                                    
+            response = await chat_manager.process_input(user_input)                                                  
+            await display.show_response(response)                                                                    
                                                                                                                 
         except KeyboardInterrupt:                                                                              
             print("\nGoodbye!")                                                                                

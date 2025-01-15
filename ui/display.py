@@ -38,14 +38,23 @@ Type `/help` for detailed command information
         )
         self.console.print(welcome_panel)
 
-    def show_response(self, response):
+    async def show_response(self, response, stream=False):
+        """Show response with optional streaming"""
         try:
-            # Try to render as markdown
-            md = Markdown(response)
-            self.console.print(Panel(md, border_style="cyan"))
+            if stream:
+                from utils.mcp_formatter import MCPFormatter
+                await MCPFormatter.stream_thoughts(response)
+            else:
+                md = Markdown(response)
+                self.console.print(Panel(md, border_style="cyan"))
         except Exception:
-            # Fallback to plain text if markdown parsing fails
+            # Fallback to plain text
             self.console.print(Panel(response, border_style="cyan"))
+            
+    def show_thinking(self):
+        """Show thinking animation"""
+        from utils.mcp_formatter import MCPFormatter
+        return MCPFormatter.show_thinking()
 
     def show_error(self, error):
         self.console.print(Panel(f"Error: {error}", border_style="red"))
