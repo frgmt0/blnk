@@ -30,7 +30,15 @@ class AnthropicAPI(BaseAPI):
                 stream=True
             )
             
-            return response.content[0].text
+            # Handle streaming response
+            full_text = ""
+            for chunk in response:
+                if chunk.type == "content_block_delta":
+                    full_text += chunk.delta.text
+                elif chunk.type == "message_delta" and chunk.delta.stop_reason:
+                    break
+                    
+            return full_text
         except Exception as e:
             return f"Anthropic API Error: {str(e)}"
             
