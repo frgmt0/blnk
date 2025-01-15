@@ -37,13 +37,10 @@ class ChatManager:
             tools = self.mcp_client.get_available_tools() if self.mcp_client else []
             
             # First pass - send message with tools context
-            response_stream = self.current_api.send_message(
-                f"Available tools: {tools}\n\nUser message: {user_input}"
-            )
-            
-            # Collect the full response from the stream
             full_response = ""
-            async for chunk in response_stream:
+            async for chunk in await self.current_api.send_message(
+                f"Available tools: {tools}\n\nUser message: {user_input}"
+            ):
                 full_response += chunk
             
             # Check if response indicates tool use
@@ -66,12 +63,11 @@ class ChatManager:
                         await self.display.show_response(formatted_result, stream=True)
                     
                     # Send results back to model without showing to user
-                    response_stream = self.current_api.send_message(
-                        f"Tool results: {tool_result}\nContinue the conversation with the user."
-                    )
                     # Collect the full response
                     full_response = ""
-                    async for chunk in response_stream:
+                    async for chunk in await self.current_api.send_message(
+                        f"Tool results: {tool_result}\nContinue the conversation with the user."
+                    ):
                         full_response += chunk
             return full_response
         return "No API selected. Use /api <name> to select an API."

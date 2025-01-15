@@ -30,14 +30,11 @@ class AnthropicAPI(BaseAPI):
                 stream=True
             )
             
-            async def generate():
-                for chunk in response:
-                    if hasattr(chunk, 'content'):
-                        yield chunk.content[0].text
-                    elif hasattr(chunk, 'delta') and chunk.delta.text:
-                        yield chunk.delta.text
-                        
-            return generate()
+            async for chunk in response:
+                if hasattr(chunk, 'content'):
+                    yield chunk.content[0].text
+                elif hasattr(chunk, 'delta') and chunk.delta.text:
+                    yield chunk.delta.text
         except Exception as e:
             return f"Anthropic API Error: {str(e)}"
             
