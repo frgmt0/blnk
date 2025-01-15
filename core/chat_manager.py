@@ -50,8 +50,8 @@ class ChatManager:
             if "I would like to use the tool" in full_response:
                 # Parse tool name and args from response
                 # This is a simple example - you may want more robust parsing
-                tool_name = response.split("use the tool")[1].split("with")[0].strip()
-                tool_args = response.split("with arguments")[1].strip()
+                tool_name = full_response.split("use the tool")[1].split("with")[0].strip()
+                tool_args = full_response.split("with arguments")[1].strip()
                 
                 # Show thinking animation while executing tool
                 with self.display.show_thinking():
