@@ -18,6 +18,9 @@ async def main():
     config = ConfigLoader.load_config()
     chat_manager = ChatManager(config, display)
     
+    # Initialize MCP tools
+    await chat_manager.initialize_tools()
+    
     # Only register APIs with available keys
     if os.getenv("OPENAI_API_KEY"):
         chat_manager.register_api("openai", OpenAIAPI())

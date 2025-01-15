@@ -10,7 +10,6 @@ class ChatManager:
         self.config = config
         self.mcp_client = None
         self.display = display
-        asyncio.run(self.initialize_tools())
         
     async def initialize_tools(self):
         """Initialize MCP client and load available tools"""
