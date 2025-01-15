@@ -31,9 +31,10 @@ class AnthropicAPI(BaseAPI):
             )
             
             # Handle streaming response
-            async for chunk in stream:
-                if chunk.type == "content_block_delta":
-                    yield chunk.delta.text
+            async for message in stream:
+                if message.type == "message_delta":
+                    if message.delta.text:
+                        yield message.delta.text
         except Exception as e:
             yield f"Anthropic API Error: {str(e)}"
             
