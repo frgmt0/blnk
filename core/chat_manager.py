@@ -6,11 +6,14 @@ class ChatManager:
         self.apis = {}                                                                                         
         self.current_api = None
         self.config = config
+        self.mcp_client = None
         asyncio.run(self.initialize_tools())
         
     async def initialize_tools(self):
-        for api in self.apis.values():
-            await api.initialize_tools()
+        """Initialize MCP client and load available tools"""
+        self.mcp_client = MCPClient()
+        await self.mcp_client.connect()
+        await self.mcp_client.refresh_tools()
                                                                                                             
     def register_api(self, name, api_instance):                                                                
         if isinstance(api_instance, BaseAPI):                                                                  
@@ -74,20 +77,21 @@ Examples:
         return f"Unknown command: {cmd}"
 
     def show_available_tools(self):
-        if not self.current_api:
-            return "No API selected. Please select an API first with /use <api_name>"
+        """Display all available MCP tools"""
+        if not self.mcp_client:
+            return "MCP client not initialized"
             
-        tools = self.current_api.get_available_tools()
+        tools = self.mcp_client.get_available_tools()
         if not tools:
-            return "No tools available for the current API"
+            return "No tools available"
             
         result = "Available MCP Tools:\n"
         for tool in tools:
-            result += f"\n{tool['name']}:"
-            if 'description' in tool:
-                result += f"\n  Description: {tool['description']}"
-            if 'parameters' in tool:
-                result += f"\n  Parameters: {tool['parameters']}"
+            result += f"\n{tool.name}:"
+            if hasattr(tool, 'description'):
+                result += f"\n  Description: {tool.description}"
+            if hasattr(tool, 'parameters'):
+                result += f"\n  Parameters: {tool.parameters}"
             result += "\n"
         return result
 
