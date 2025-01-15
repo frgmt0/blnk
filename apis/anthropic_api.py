@@ -23,7 +23,7 @@ class AnthropicAPI(BaseAPI):
             if isinstance(message, str) and "Tool results:" in message:
                 messages = [{"role": "user", "content": message}]
             
-            async with await self.client.messages.stream(
+            async with self.client.messages.stream(
                 model=self.model,
                 max_tokens=1000,
                 messages=messages
