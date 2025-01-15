@@ -36,7 +36,7 @@ class AnthropicAPI(BaseAPI):
                 elif hasattr(chunk, 'delta') and chunk.delta.text:
                     yield chunk.delta.text
         except Exception as e:
-            return f"Anthropic API Error: {str(e)}"
+            yield f"Anthropic API Error: {str(e)}"
             
     def get_name(self):
         return "anthropic"
