@@ -41,15 +41,21 @@ Type `/help` for detailed command information
     async def show_response(self, response, stream=False):
         """Show response with optional streaming"""
         try:
-            if stream:
-                from utils.mcp_formatter import MCPFormatter
-                await MCPFormatter.stream_thoughts(response)
-            else:
+            if isinstance(response, str):
                 md = Markdown(response)
                 self.console.print(Panel(md, border_style="cyan"))
-        except Exception:
+            else:
+                # Handle streaming response
+                with self.console.status("[cyan]Thinking...", spinner="dots"):
+                    current_text = ""
+                    async for chunk in response:
+                        if chunk:
+                            current_text += chunk
+                            self.console.clear()
+                            self.console.print(Panel(Markdown(current_text), border_style="cyan"))
+        except Exception as e:
             # Fallback to plain text
-            self.console.print(Panel(response, border_style="cyan"))
+            self.console.print(Panel(str(response), border_style="cyan"))
             
     def show_thinking(self):
         """Show thinking animation"""

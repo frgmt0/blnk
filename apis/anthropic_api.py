@@ -30,15 +30,15 @@ class AnthropicAPI(BaseAPI):
                 stream=True
             )
             
-            # Handle streaming response
-            full_text = ""
-            for chunk in response:
-                if chunk.type == "content_block_delta":
-                    full_text += chunk.delta.text
-                elif chunk.type == "message_delta" and chunk.delta.stop_reason:
-                    break
-                    
-            return full_text
+            # Return async generator for streaming
+            async def stream_response():
+                async for chunk in response:
+                    if chunk.type == "content_block_delta":
+                        yield chunk.delta.text
+                    elif chunk.type == "message_delta" and chunk.delta.stop_reason:
+                        break
+                        
+            return stream_response()
         except Exception as e:
             return f"Anthropic API Error: {str(e)}"
             
