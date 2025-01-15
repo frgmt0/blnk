@@ -1,6 +1,6 @@
 {
     "server": {
-        "command": "python",
+        "command": "/opt/homebrew/bin/python3",
         "args": ["mcp_server.py"],
         "env": {}
     },

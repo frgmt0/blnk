@@ -22,9 +22,18 @@ class MCPClient:
         
     async def connect(self):
         """Establish connection to MCP server"""
-        self.read, self.write = await stdio_client(self.server_params).__aenter__()
-        self.session = await ClientSession(self.read, self.write).__aenter__()
-        await self.session.initialize()
+        try:
+            self.read, self.write = await stdio_client(self.server_params).__aenter__()
+            self.session = await ClientSession(self.read, self.write).__aenter__()
+            await self.session.initialize()
+        except FileNotFoundError as e:
+            print(f"Error: Could not start MCP server - {str(e)}")
+            print("Please check that Python and mcp_server.py are available")
+            return False
+        except Exception as e:
+            print(f"Error connecting to MCP server: {str(e)}")
+            return False
+        return True
         
     async def disconnect(self):
         """Clean up MCP connection"""
