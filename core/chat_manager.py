@@ -38,7 +38,8 @@ Available Commands:
   /use <api>      Switch to specified AI provider
   /model-list     Show available models for current/all providers
   /switch-model   Switch to a different model for current provider
-  exit            Exit the application
+  /exit           Exit the application
+  exit            Exit the application (alternative)
 
 Examples:
   /use openai             Switch to OpenAI provider
@@ -57,6 +58,8 @@ Examples:
                 self.current_api = self.apis[api_name]
                 return f"Switched to {api_name} API"
             return f"API '{api_name}' not available. Use /apis to see available APIs."
+        elif cmd == 'exit':
+            raise KeyboardInterrupt
 
         return f"Unknown command: {cmd}"
 
