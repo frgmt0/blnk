@@ -22,7 +22,20 @@ class ChatManager:
         cmd = parts[0].lower()
 
         if cmd == 'help':
-            return self.show_help()
+            help_text = f"""
+Available Commands:
+  /help           Show this help message
+  /apis           List available AI providers
+  /use <api>      Switch to specified AI provider
+  /model-list     Show available models for current/all providers
+  /switch-model   Switch to a different model for current provider
+  exit            Exit the application
+
+Examples:
+  /use openai             Switch to OpenAI provider
+  /switch-model gpt-4o    Switch to GPT-4 model
+"""
+            return help_text
         elif cmd == 'apis':
             return self.show_available_apis()
         elif cmd == 'model-list':
