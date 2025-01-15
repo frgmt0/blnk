@@ -23,18 +23,13 @@ class AnthropicAPI(BaseAPI):
             if isinstance(message, str) and "Tool results:" in message:
                 messages = [{"role": "user", "content": message}]
             
-            stream = await self.client.messages.create(
+            async with await self.client.messages.stream(
                 model=self.model,
                 max_tokens=1000,
-                messages=messages,
-                stream=True
-            )
-            
-            # Handle streaming response
-            async for message in stream:
-                if message.type == "message_delta":
-                    if message.delta.value:
-                        yield message.delta.value
+                messages=messages
+            ) as stream:
+                async for text in stream.text_stream:
+                    yield text
         except Exception as e:
             yield f"Anthropic API Error: {str(e)}"
             
