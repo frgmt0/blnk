@@ -12,7 +12,13 @@ class AnthropicAPI(BaseAPI):
         try:
             response = self.client.messages.create(
                 model=self.model,
-                messages=[{"role": "user", "content": message}]
+                max_tokens=1000,
+                messages=[
+                    {
+                        "role": "user",
+                        "content": message
+                    }
+                ]
             )
             return response.content[0].text
         except Exception as e:
