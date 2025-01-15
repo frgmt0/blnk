@@ -32,20 +32,27 @@ class ChatManager:
             return self.handle_command(user_input[1:])                                                         
                                                                                                             
         if self.current_api:
-            response = self.current_api.send_message(user_input)
+            # Get available tools
+            tools = self.mcp_client.get_available_tools() if self.mcp_client else []
             
-            # Handle tool execution if requested
-            if hasattr(response, 'tool_calls') and response.tool_calls:
-                tool_results = []
-                for tool_call in response.tool_calls:
-                    result = asyncio.run(self.mcp_client.run_tool(
-                        tool_call.name,
-                        tool_call.arguments
-                    ))
-                    tool_results.append(result)
-                # Send tool results back to model
-                return self.current_api.send_message(
-                    f"Tool results: {tool_results}\nContinue the conversation."
+            # First pass - send message with tools context
+            response = self.current_api.send_message(
+                f"Available tools: {tools}\n\nUser message: {user_input}"
+            )
+            
+            # Check if response indicates tool use
+            if "I would like to use the tool" in response:
+                # Parse tool name and args from response
+                # This is a simple example - you may want more robust parsing
+                tool_name = response.split("use the tool")[1].split("with")[0].strip()
+                tool_args = response.split("with arguments")[1].strip()
+                
+                # Execute tool
+                tool_result = asyncio.run(self.mcp_client.run_tool(tool_name, tool_args))
+                
+                # Second pass - send tool results back to model
+                response = self.current_api.send_message(
+                    f"Tool results: {tool_result}\nContinue the conversation with the user."
                 )
             return response
         return "No API selected. Use /api <name> to select an API."

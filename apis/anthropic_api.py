@@ -9,44 +9,29 @@ class AnthropicAPI(BaseAPI):
         self.client = Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
         self.model = ANTHROPIC_MODELS[0]
         
-    def send_message(self, message):
+    def send_message(self, message, tools=None):
+        """Send a message to the Anthropic API
+        
+        Args:
+            message: The user message
+            tools: Optional list of available tools
+        """
         try:
+            messages = [{"role": "user", "content": message}]
+            
+            # If tools were used, append their results to the message
+            if isinstance(message, str) and "Tool results:" in message:
+                messages = [{"role": "user", "content": message}]
+            
             response = self.client.messages.create(
                 model=self.model,
                 max_tokens=1000,
-                messages=[
-                    {
-                        "role": "user",
-                        "content": message
-                    }
-                ],
-                tools=self.get_tool_config()
+                messages=messages
             )
             
-            # Check if the response indicates tool use
-            if hasattr(response, 'tool_calls') and response.tool_calls:
-                return response
             return response.content[0].text
         except Exception as e:
             return f"Anthropic API Error: {str(e)}"
-            
-    def get_tool_config(self):
-        """Get tool configuration for the API"""
-        # Convert MCP tools to Anthropic format
-        tools = []
-        for tool in self.mcp_client.get_available_tools():
-            if isinstance(tool, tuple):
-                name, details = tool
-                tool_config = {
-                    "type": "function",
-                    "function": {
-                        "name": name,
-                        "description": details.get("description", ""),
-                        "parameters": details.get("parameters", {})
-                    }
-                }
-                tools.append(tool_config)
-        return tools
             
     def get_name(self):
         return "anthropic"
