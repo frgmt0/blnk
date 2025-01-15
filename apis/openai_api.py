@@ -1,11 +1,12 @@
 import os
 from openai import OpenAI
 from .base_api import BaseAPI
+from config.models import OPENAI_MODELS
 
 class OpenAIAPI(BaseAPI):
     def __init__(self):
         self.client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-        self.model = "gpt-4-turbo-preview"
+        self.model = OPENAI_MODELS[0]
         
     def send_message(self, message):
         try:
@@ -19,3 +20,12 @@ class OpenAIAPI(BaseAPI):
             
     def get_name(self):
         return "openai"
+        
+    def get_available_models(self):
+        return OPENAI_MODELS
+        
+    def set_model(self, model_name):
+        if model_name in OPENAI_MODELS:
+            self.model = model_name
+            return True
+        return False
