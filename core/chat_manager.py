@@ -31,9 +31,24 @@ class ChatManager:
         if user_input.startswith('/'):                                                                         
             return self.handle_command(user_input[1:])                                                         
                                                                                                             
-        if self.current_api:                                                                                   
-            return self.current_api.send_message(user_input)                                                   
-        return "No API selected. Use /api <name> to select an API."                                            
+        if self.current_api:
+            response = self.current_api.send_message(user_input)
+            
+            # Handle tool execution if requested
+            if hasattr(response, 'tool_calls') and response.tool_calls:
+                tool_results = []
+                for tool_call in response.tool_calls:
+                    result = asyncio.run(self.mcp_client.run_tool(
+                        tool_call.name,
+                        tool_call.arguments
+                    ))
+                    tool_results.append(result)
+                # Send tool results back to model
+                return self.current_api.send_message(
+                    f"Tool results: {tool_results}\nContinue the conversation."
+                )
+            return response
+        return "No API selected. Use /api <name> to select an API."
                                                                                                             
     def handle_command(self, command):
         parts = command.split()

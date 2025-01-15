@@ -19,11 +19,34 @@ class AnthropicAPI(BaseAPI):
                         "role": "user",
                         "content": message
                     }
-                ]
+                ],
+                tools=self.get_tool_config()
             )
+            
+            # Check if the response indicates tool use
+            if hasattr(response, 'tool_calls') and response.tool_calls:
+                return response
             return response.content[0].text
         except Exception as e:
             return f"Anthropic API Error: {str(e)}"
+            
+    def get_tool_config(self):
+        """Get tool configuration for the API"""
+        # Convert MCP tools to Anthropic format
+        tools = []
+        for tool in self.mcp_client.get_available_tools():
+            if isinstance(tool, tuple):
+                name, details = tool
+                tool_config = {
+                    "type": "function",
+                    "function": {
+                        "name": name,
+                        "description": details.get("description", ""),
+                        "parameters": details.get("parameters", {})
+                    }
+                }
+                tools.append(tool_config)
+        return tools
             
     def get_name(self):
         return "anthropic"

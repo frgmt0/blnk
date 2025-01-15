@@ -49,10 +49,11 @@ class MCPClient:
             self.tools = await session.list_tools()
             return self.tools
         
-    async def execute_tool(self, tool_name, tool_input):
-        """Execute a tool with given input"""
+    async def run_tool(self, tool_name, tool_input):
+        """Execute a tool with given input while maintaining session"""
         try:
             async with self.get_session() as session:
+                await session.initialize()  # Ensure session is initialized
                 result = await session.call_tool(tool_name, tool_input)
                 return result
         except Exception as e:
