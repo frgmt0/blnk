@@ -1,3 +1,4 @@
+import os
 from colorama import init, Fore, Back, Style
 from core.chat_manager import ChatManager
 from ui.display import Display
