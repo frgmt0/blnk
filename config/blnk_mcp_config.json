@@ -1,0 +1,21 @@
+{
+    "server": {
+        "command": "python",
+        "args": ["mcp_server.py"],
+        "env": {}
+    },
+    "tools": {
+        "file_reader": {
+            "name": "read_file",
+            "description": "Read contents of a file"
+        },
+        "web_search": {
+            "name": "search_web",
+            "description": "Search the web for information"
+        },
+        "calculator": {
+            "name": "calculate",
+            "description": "Perform mathematical calculations"
+        }
+    }
+}

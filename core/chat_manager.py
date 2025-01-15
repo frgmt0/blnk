@@ -5,6 +5,11 @@ class ChatManager:
         self.apis = {}                                                                                         
         self.current_api = None
         self.config = config
+        asyncio.run(self.initialize_tools())
+        
+    async def initialize_tools(self):
+        for api in self.apis.values():
+            await api.initialize_tools()
                                                                                                             
     def register_api(self, name, api_instance):                                                                
         if isinstance(api_instance, BaseAPI):                                                                  
