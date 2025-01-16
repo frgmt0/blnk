@@ -17,18 +17,28 @@ class Display:
 
     def show_welcome(self):
         welcome_md = f"""
-# Welcome to blnk!
+╭──────────────────────────────────────────╮
+│                                          │
+│              Welcome to blnk             │
+│                                          │
+│      Your AI Terminal Companion          │
+│                                          │
+╰──────────────────────────────────────────╯
 
-*A modular terminal chat application supporting multiple AI providers*
+blnk is a powerful terminal-based chat application that lets you seamlessly interact with multiple AI providers.
 
-## Quick Start:
-- Use `/apis` to see available AI providers
-- Use `/use <api_name>` to select a provider
-- Use `/model-list` to see available models
-- Use `/switch-model <model_name>` to switch to a new model
-- Start chatting!
+**Available Commands:**
+• `/apis` - View available AI providers
+• `/use <api>` - Select your preferred AI
+• `/model-list` - Browse available models
+• `/help` - See all commands
 
-Type `/help` for detailed command information
+To get started, try:
+```
+/use anthropic
+```
+
+Made with ♥ by Jace
 """
         welcome_panel = Panel(
             Markdown(welcome_md),
@@ -42,19 +52,7 @@ Type `/help` for detailed command information
         """Show response with optional streaming"""
         try:
             if isinstance(response, str):
-                # Check if response starts with "Tool:"
-                lines = response.split('\n')
-                formatted_lines = []
-                
-                for line in lines:
-                    # Skip bolding for any line containing tool-related content
-                    if 'Tool:' in line or 'Tool results:' in line:
-                        formatted_lines.append(line)
-                    else:
-                        # Make regular output bold
-                        formatted_lines.append(f"**{line}**")
-                        
-                md = Markdown('\n'.join(formatted_lines))
+                md = Markdown(response)
                 self.console.print(md)
             else:
                 # Handle streaming response
