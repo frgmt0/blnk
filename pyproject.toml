@@ -42,4 +42,4 @@ Documentation = "https://github.com/frgmt0/blnk#readme"
 "Bug Tracker" = "https://github.com/frgmt0/blnk/issues"
 
 [project.scripts]
-blnk = "blnk-chat.main:run"
+blnk = "blnk_chat.main:run"
