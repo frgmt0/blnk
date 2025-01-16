@@ -17,11 +17,10 @@ class AnthropicAPI(BaseAPI):
             tools: Optional list of available tools
         """
         try:
-            messages = [
-                {"role": "system", "content": self.system_prompt},
-                {"role": "system", "content": self.style_prompt},
-                {"role": "user", "content": message}
-            ]
+            # Combine system and style prompts
+            system = self.system_prompt + "\n\n" + self.style_prompt
+            
+            messages = [{"role": "user", "content": message}]
             
             # If tools were used, append their results to the message
             if isinstance(message, str) and "Tool results:" in message:
@@ -30,7 +29,8 @@ class AnthropicAPI(BaseAPI):
             async with self.client.messages.stream(
                 model=self.model,
                 max_tokens=1000,
-                messages=messages
+                messages=messages,
+                system=system
             ) as stream:
                 async for text in stream.text_stream:
                     yield text
