@@ -2,6 +2,7 @@ import os
 import json
 from pathlib import Path
 from rich.prompt import Prompt, Confirm
+from rich.console import Console
 
 class SetupManager:
     def __init__(self, config_path=None, env_path=None):
@@ -9,6 +10,7 @@ class SetupManager:
         self.env_path = env_path or Path(".env")
         self.valid_providers = ["anthropic", "openai", "gemini"]
         self.config = self._load_config()
+        self.console = Console()
 
     def _load_config(self):
         if self.config_path.exists():
@@ -21,22 +23,32 @@ class SetupManager:
             json.dump(self.config, f, indent=4)
 
     def _save_env(self, env_vars):
-        # Read existing env file if it exists
-        existing_env = {}
-        if self.env_path.exists():
-            with open(self.env_path) as f:
-                for line in f:
-                    if '=' in line:
-                        key, value = line.strip().split('=', 1)
-                        existing_env[key] = value
+        """Save environment variables to .env file with error handling"""
+        try:
+            # Ensure .env file exists
+            self.env_path.touch(exist_ok=True)
+            
+            # Read existing env file
+            existing_env = {}
+            if self.env_path.stat().st_size > 0:
+                with open(self.env_path) as f:
+                    for line in f:
+                        if '=' in line:
+                            key, value = line.strip().split('=', 1)
+                            existing_env[key] = value
 
-        # Update with new values
-        existing_env.update(env_vars)
+            # Update with new values
+            existing_env.update(env_vars)
 
-        # Write back to file
-        with open(self.env_path, 'w') as f:
-            for key, value in existing_env.items():
-                f.write(f"{key}={value}\n")
+            # Write back to file
+            with open(self.env_path, 'w') as f:
+                for key, value in existing_env.items():
+                    f.write(f"{key}={value}\n")
+                    
+            return True
+        except Exception as e:
+            print(f"\n[red]Error saving environment variables: {str(e)}[/red]")
+            return False
 
     def run_setup(self):
         print("\nWelcome to blnk setup!")
@@ -73,8 +85,11 @@ class SetupManager:
             env_vars[env_key] = api_key
 
         # Save API keys to .env
-        self._save_env(env_vars)
-        print("\nAPI keys saved to .env file")
+        if self._save_env(env_vars):
+            self.console.print("\n[green]✓[/green] API keys successfully saved to .env file")
+        else:
+            self.console.print("\n[red]✗[/red] Failed to save API keys. Please check file permissions and try again.")
+            return
 
         # Set default provider
         while True:
@@ -123,6 +138,10 @@ class SetupManager:
                     print("Please enter a valid number.")
 
         # Save config
-        self._save_config()
-        print("\nConfiguration saved successfully!")
-        print("\nSetup complete! You can now start using blnk.")
+        try:
+            self._save_config()
+            self.console.print("\n[green]✓[/green] Configuration saved successfully!")
+            self.console.print("\n[cyan]Setup complete![/cyan] You can now start using blnk.")
+            self.console.print("\nTip: Use [green]/help[/green] to see available commands")
+        except Exception as e:
+            self.console.print(f"\n[red]✗[/red] Failed to save configuration: {str(e)}")
