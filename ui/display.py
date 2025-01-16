@@ -48,10 +48,11 @@ Type `/help` for detailed command information
                 
                 for line in lines:
                     if line.strip().startswith('Tool:'):
-                        # Format tool usage as subscript
-                        formatted_lines.append(f"<sub>{line}</sub>")
-                    else:
+                        # Keep tool usage as normal text
                         formatted_lines.append(line)
+                    else:
+                        # Make regular output bold
+                        formatted_lines.append(f"**{line}**")
                         
                 md = Markdown('\n'.join(formatted_lines))
                 self.console.print(md)
