@@ -1,6 +1,7 @@
 import argparse
 import json
 import os
+import subprocess
 from datetime import datetime
 from pathlib import Path
 
@@ -33,7 +34,7 @@ def update_init_version(version_str, init_path):
 
 def get_contributors():
     """Get list of contributors from CONTRIBUTORS.md"""
-    contributors_path = Path(__file__).parent.parent / "CONTRIBUTORS.md"
+    contributors_path = Path(__file__).parent.parent.parent.parent / "CONTRIBUTORS.md"
     if not contributors_path.exists():
         return []
         
@@ -52,13 +53,13 @@ def get_contributors():
     
     return contributors
 
-def update_changelog(version_str, release_notes_path, contributors):
+def update_changelog(version_str, changelog_path, contributors):
     """Update CHANGELOG.md with new version and release notes"""
     today = datetime.now().strftime("%Y-%m-%d")
     
     # Read existing changelog
-    if os.path.exists(release_notes_path):
-        with open(release_notes_path, 'r') as f:
+    if os.path.exists(changelog_path):
+        with open(changelog_path, 'r') as f:
             existing_content = f.read()
     else:
         existing_content = "# Changelog\n\n"
@@ -80,43 +81,76 @@ def update_changelog(version_str, release_notes_path, contributors):
                  "## [".join(existing_content.split("## [")[1:])
     
     # Write updated changelog
-    with open(release_notes_path, 'w') as f:
+    with open(changelog_path, 'w') as f:
         f.write(new_content)
 
+def git_commit_and_tag(version_str):
+    """Commit version changes and create a new tag"""
+    try:
+        # Stage changes
+        subprocess.run(['git', 'add', '.'], check=True)
+        
+        # Commit changes
+        commit_msg = f'release: version {version_str}'
+        subprocess.run(['git', 'commit', '-m', commit_msg], check=True)
+        
+        # Create and push tag
+        tag = f'v{version_str}'
+        subprocess.run(['git', 'tag', '-a', tag, '-m', f'Release {tag}'], check=True)
+        subprocess.run(['git', 'push', 'origin', 'main'], check=True)
+        subprocess.run(['git', 'push', 'origin', tag], check=True)
+        
+        return True
+    except subprocess.CalledProcessError as e:
+        print(f"Error in git operations: {e}")
+        return False
+
 def main():
-    parser = argparse.ArgumentParser(description='Update version and generate release notes')
-    parser.add_argument('-major', help='Major version number')
-    parser.add_argument('-minor', help='Minor version number')
-    parser.add_argument('-patch', help='Patch version number')
-    parser.add_argument('-release-notes', help='Path to CHANGELOG.md', default='CHANGELOG.md')
+    parser = argparse.ArgumentParser(description='Release automation script')
+    parser.add_argument('version', help='New version number (e.g., 0.1.0)')
+    parser.add_argument('--no-git', action='store_true', help='Skip git operations')
+    parser.add_argument('--dry-run', action='store_true', help='Show what would be done without making changes')
     
     args = parser.parse_args()
-    
-    # Construct version string
-    if args.major and args.minor and args.patch:
-        version_str = f"{args.major}.{args.minor}.{args.patch}"
-    elif args.major:
-        version_str = args.major
-    else:
-        raise ValueError("Please provide version number(s)")
+    version_str = args.version
     
     # Get project root directory
-    root_dir = Path(__file__).parent.parent
+    root_dir = Path(__file__).parent.parent.parent.parent
+    
+    if args.dry_run:
+        print(f"Would update version to {version_str} in:")
+        print(f"- {root_dir}/pyproject.toml")
+        print(f"- {root_dir}/src/blnk/__init__.py")
+        print(f"Would update CHANGELOG.md")
+        if not args.no_git:
+            print("Would create git commit and tag")
+        return
     
     # Update version in pyproject.toml
     update_version(version_str, root_dir / "pyproject.toml")
+    print(f"✓ Updated version in pyproject.toml")
     
     # Update version in __init__.py
-    update_init_version(version_str, root_dir / "__init__.py")
+    update_init_version(version_str, root_dir / "src" / "blnk" / "__init__.py")
+    print(f"✓ Updated version in __init__.py")
     
     # Get contributors
     contributors = get_contributors()
     
     # Update changelog
-    update_changelog(version_str, args.release_notes, contributors)
+    update_changelog(version_str, root_dir / "CHANGELOG.md", contributors)
+    print(f"✓ Updated CHANGELOG.md")
     
-    print(f"Version updated to {version_str}")
-    print(f"Changelog updated at {args.release_notes}")
+    if not args.no_git:
+        if git_commit_and_tag(version_str):
+            print(f"✓ Created git commit and tag v{version_str}")
+            print("\nRelease process completed successfully!")
+            print(f"GitHub Actions will now build and publish version {version_str}")
+        else:
+            print("\n✗ Failed to complete git operations")
+            return 1
+    
+    return 0
 
 if __name__ == "__main__":
-    main()
+    exit(main())
