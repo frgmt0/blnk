@@ -20,7 +20,8 @@ class ConfigLoader:
                     "openai": 2000,
                     "anthropic": 1000,
                     "gemini": 1000
-                }
+                },
+                "api_keys": {}
             }
             with open(config_path, 'w') as f:
                 json.dump(default_config, f, indent=4)

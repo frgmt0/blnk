@@ -5,14 +5,13 @@ from rich.prompt import Prompt, Confirm
 from rich.console import Console
 
 class SetupManager:
-    def __init__(self, config_path=None, env_path=None):
-        # Use home directory for config
-        self.config_dir = Path.home() / ".blnk" / "config"
+    def __init__(self, config_path=None):
+        # Use project config directory
+        self.config_dir = Path(__file__).parent.parent / "config"
         self.config_path = config_path or (self.config_dir / "config.json")
-        self.env_path = env_path or (self.config_dir / "api_keys.txt")
         self.valid_providers = ["anthropic", "openai", "gemini"]
         
-        # Create config directory if it doesn't exist
+        # Ensure config directory exists
         self.config_dir.mkdir(parents=True, exist_ok=True)
         
         self.config = self._load_config()
@@ -29,37 +28,27 @@ class SetupManager:
             json.dump(self.config, f, indent=4)
 
     def _save_env(self, env_vars):
-        """Save API keys to plain text file with error handling"""
+        """Save API keys to config.json"""
         try:
-            # Ensure api_keys.txt file exists
-            self.env_path.touch(exist_ok=True)
+            # Load existing config
+            config = self._load_config() or {}
             
-            # Read existing keys
-            existing_env = {}
-            if self.env_path.stat().st_size > 0:
-                with open(self.env_path) as f:
-                    for line in f:
-                        if ':' in line:
-                            key, value = line.strip().split(':', 1)
-                            existing_env[key] = value.strip()
+            # Add/update API keys
+            if 'api_keys' not in config:
+                config['api_keys'] = {}
+            config['api_keys'].update(env_vars)
 
-            # Update with new values
-            existing_env.update(env_vars)
-
-            # Write back to file
-            with open(self.env_path, 'w') as f:
-                f.write("# blnk API Keys\n")
-                for key, value in existing_env.items():
-                    # Remove _API_KEY suffix for cleaner display
-                    display_key = key.replace("_API_KEY", "").title()
-                    f.write(f"{display_key}: {value}\n")
-                    
-                # Set environment variables
+            # Save updated config
+            with open(self.config_path, 'w') as f:
+                json.dump(config, f, indent=4)
+                
+            # Set environment variables
+            for key, value in env_vars.items():
                 os.environ[key] = value
                     
             return True
         except Exception as e:
-            print(f"\n[red]Error saving environment variables: {str(e)}[/red]")
+            print(f"\n[red]Error saving API keys: {str(e)}[/red]")
             return False
 
     def run_setup(self):
