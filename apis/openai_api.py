@@ -13,7 +13,11 @@ class OpenAIAPI(BaseAPI):
         try:
             response = self.client.chat.completions.create(
                 model=self.model,
-                messages=[{"role": "user", "content": message}]
+                messages=[
+                    {"role": "system", "content": self.system_prompt},
+                    {"role": "system", "content": self.style_prompt},
+                    {"role": "user", "content": message}
+                ]
             )
             return response.choices[0].message.content
         except Exception as e:

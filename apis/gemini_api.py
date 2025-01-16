@@ -12,7 +12,9 @@ class GeminiAPI(BaseAPI):
         
     async def send_message(self, message):
         try:
-            response = self.model.generate_content(message)
+            # Combine prompts and message
+            full_prompt = f"{self.system_prompt}\n\n{self.style_prompt}\n\n{message}"
+            response = self.model.generate_content(full_prompt)
             return response.text
         except Exception as e:
             return f"Gemini API Error: {str(e)}"

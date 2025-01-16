@@ -17,11 +17,15 @@ class AnthropicAPI(BaseAPI):
             tools: Optional list of available tools
         """
         try:
-            messages = [{"role": "user", "content": message}]
+            messages = [
+                {"role": "system", "content": self.system_prompt},
+                {"role": "system", "content": self.style_prompt},
+                {"role": "user", "content": message}
+            ]
             
             # If tools were used, append their results to the message
             if isinstance(message, str) and "Tool results:" in message:
-                messages = [{"role": "user", "content": message}]
+                messages.append({"role": "user", "content": message})
             
             async with self.client.messages.stream(
                 model=self.model,
