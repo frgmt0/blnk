@@ -7,13 +7,13 @@ class BaseAPI(ABC):
         self.style_prompt = self._load_prompt("STYLE.md")
         
     def _load_prompt(self, filename):
-        """Load prompt from file in project root"""
-        prompt_path = Path(__file__).parent.parent / filename
+        """Load prompt from prompts directory"""
+        prompt_path = Path(__file__).parent.parent / "prompts" / filename
         try:
             with open(prompt_path) as f:
                 return f.read()
         except FileNotFoundError:
-            print(f"Warning: {filename} not found")
+            print(f"Warning: {filename} not found in prompts directory")
             return ""
 
     @abstractmethod
