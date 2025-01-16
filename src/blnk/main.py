@@ -1,13 +1,13 @@
 import os
 import asyncio
 from colorama import init, Fore, Back, Style
-from core.chat_manager import ChatManager
-from ui.display import Display
-from apis.openai_api import OpenAIAPI
-from apis.anthropic_api import AnthropicAPI
-from apis.gemini_api import GeminiAPI
+from .core.chat_manager import ChatManager
+from .ui.display import Display
+from .apis.openai_api import OpenAIAPI
+from .apis.anthropic_api import AnthropicAPI
+from .apis.gemini_api import GeminiAPI
 from dotenv import load_dotenv
-from utils.config_loader import ConfigLoader
+from .utils.config_loader import ConfigLoader
                                                                                                                 
 async def main():                                                                                                    
     init()  # Initialize colorama                                                                              

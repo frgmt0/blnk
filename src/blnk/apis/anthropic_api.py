@@ -1,7 +1,7 @@
 import os
 from anthropic import AsyncAnthropic
 from .base_api import BaseAPI
-from config.models import ANTHROPIC_MODELS
+from ..config.models import ANTHROPIC_MODELS
 
 class AnthropicAPI(BaseAPI):
     def __init__(self):

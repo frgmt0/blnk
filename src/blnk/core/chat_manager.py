@@ -1,7 +1,7 @@
 import asyncio
 import json
-from apis.base_api import BaseAPI
-from utils.mcp_client import MCPClient
+from ..apis.base_api import BaseAPI
+from ..utils.mcp_client import MCPClient
                                                                                                             
 class ChatManager:                                                                                             
     def __init__(self, config=None, display=None):                                                                                        
@@ -57,7 +57,7 @@ class ChatManager:
                     
                     # Format MCP reasoner output if applicable
                     if tool_name == "mcp-reasoner":
-                        from utils.mcp_formatter import MCPFormatter
+                        from ..utils.mcp_formatter import MCPFormatter
                         formatted_result = MCPFormatter.format_thought(tool_result)
                         # Stream the formatted thoughts
                         await self.display.show_response(formatted_result, stream=True)
@@ -115,7 +115,7 @@ class ChatManager:
         elif cmd == 'tools':
             return self.show_available_tools()
         elif cmd == 'setup':
-            from utils.setup_manager import SetupManager
+            from ..utils.setup_manager import SetupManager
             setup = SetupManager()
             setup.run_setup()
             return "Setup complete! Please restart blnk to apply changes."

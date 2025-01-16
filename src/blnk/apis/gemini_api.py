@@ -1,7 +1,7 @@
 import os
 import google.generativeai as genai
 from .base_api import BaseAPI
-from config.models import GEMINI_MODELS
+from ..config.models import GEMINI_MODELS
 
 class GeminiAPI(BaseAPI):
     def __init__(self):
