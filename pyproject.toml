@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "blnk"
+name = "blnk-chat"
 version = "0.1.0"
 packages = ["src/blnk"]
 description = "A powerful terminal-based chat application for seamless interaction with multiple AI providers"
@@ -42,4 +42,4 @@ Documentation = "https://github.com/frgmt0/blnk#readme"
 "Bug Tracker" = "https://github.com/frgmt0/blnk/issues"
 
 [project.scripts]
-blnk = "blnk.main:run"
+blnk = "blnk_chat.main:run"
