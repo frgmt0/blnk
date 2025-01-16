@@ -107,7 +107,7 @@ class SetupManager:
         self.config["default_models"] = self.config.get("default_models", {})
         
         # Set default models for each provider
-        from config.models import OPENAI_MODELS, ANTHROPIC_MODELS, GEMINI_MODELS
+        from ..config.models import OPENAI_MODELS, ANTHROPIC_MODELS, GEMINI_MODELS
         model_maps = {
             "openai": OPENAI_MODELS,
             "anthropic": ANTHROPIC_MODELS,
