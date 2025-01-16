@@ -1,6 +1,18 @@
 # Changelog
 
 
+## [0.2.0] - 2025-01-16
+
+### Added
+- <add new features>
+
+### Changed
+- <add changes>
+
+### Fixed
+- <add bug fixes>
+
+
 ## [0.1.6] - 2025-01-16
 
 ### Added

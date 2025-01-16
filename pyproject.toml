@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "blnk-chat"
-version = "0.1.6"
+version = "0.2.0"
 packages = ["src/blnk_chat"]
 description = "A powerful terminal-based chat application for seamless interaction with multiple AI providers"
 readme = "README.md"

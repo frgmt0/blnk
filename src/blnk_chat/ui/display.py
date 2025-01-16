@@ -68,7 +68,7 @@ Made with ♥ by frgmt0_o
             
     def show_thinking(self):
         """Show thinking animation"""
-        from utils.mcp_formatter import MCPFormatter
+        from ..utils.mcp_formatter import MCPFormatter
         return MCPFormatter.show_thinking()
 
     def show_error(self, error):
