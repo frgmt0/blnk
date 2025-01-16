@@ -36,10 +36,10 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/yourusername/blnk"
-Repository = "https://github.com/yourusername/blnk"
-Documentation = "https://github.com/yourusername/blnk#readme"
-"Bug Tracker" = "https://github.com/yourusername/blnk/issues"
+Homepage = "https://github.com/frgmt0/blnk"
+Repository = "https://github.com/frgmt0/blnk"
+Documentation = "https://github.com/frgmt0/blnk#readme"
+"Bug Tracker" = "https://github.com/frgmt0/blnk/issues"
 
 [project.scripts]
 blnk = "blnk.main:run"

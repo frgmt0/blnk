@@ -18,7 +18,7 @@ A powerful terminal-based chat application for seamless interaction with multipl
 ## Installation
 
 ```bash
-pip install blnk
+pip install blnk-chat
 ```
 
 Requires Python 3.13 or higher.
@@ -27,7 +27,7 @@ Requires Python 3.13 or higher.
 
 1. Install blnk:
 ```bash
-pip install blnk
+pip install blnk-chat
 ```
 
 2. Run the setup command:
@@ -58,14 +58,14 @@ blnk
 ### Examples
 
 ```bash
-/use anthropic             # Switch to Anthropic provider
-/switch-model claude-3     # Switch to Claude 3 model
-/tools                     # Show available tools
+/use anthropic                               # Switch to Anthropic provider
+/switch-model claude-3-5-sonnet-20241022     # Switch to Claude 3 model
+/tools                                       # Show available tools
 ```
 
 ## Configuration
 
-blnk uses environment variables for API keys. Create a `.env` file in your project directory:
+blnk-chat uses environment variables for API keys. Create a `.env` file in your project directory:
 
 ```env
 OPENAI_API_KEY=your_openai_key
@@ -89,7 +89,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Acknowledgments
 
-- Built with [MCP](https://github.com/mcp-team/mcp) for advanced reasoning capabilities
+- Built with [MCP-Reasoner](https://github.com/Jacck/mcp-reasoner) for advanced reasoning capabilities
 - Thanks to all [contributors](CONTRIBUTORS.md)
 
 ## Author
