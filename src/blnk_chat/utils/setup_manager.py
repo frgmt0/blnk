@@ -24,6 +24,10 @@ class SetupManager:
         return {}
 
     def _save_config(self):
+        # Ensure config directory exists
+        self.config_dir.mkdir(parents=True, exist_ok=True)
+        
+        # Save config using absolute path
         with open(self.config_path, 'w') as f:
             json.dump(self.config, f, indent=4)
 
