@@ -120,7 +120,7 @@ def main():
     if args.dry_run:
         print(f"Would update version to {version_str} in:")
         print(f"- {root_dir}/pyproject.toml")
-        print(f"- {root_dir}/src/blnk/__init__.py")
+        print(f"- {root_dir}/src/blnk-chat/__init__.py")
         print(f"Would update CHANGELOG.md")
         if not args.no_git:
             print("Would create git commit and tag")
@@ -131,7 +131,7 @@ def main():
     print(f"✓ Updated version in pyproject.toml")
     
     # Update version in __init__.py
-    update_init_version(version_str, root_dir / "src" / "blnk" / "__init__.py")
+    update_init_version(version_str, root_dir / "src" / "blnk-chat" / "__init__.py")
     print(f"✓ Updated version in __init__.py")
     
     # Get contributors

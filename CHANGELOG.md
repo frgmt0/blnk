@@ -1,5 +1,17 @@
 # Changelog
 
+
+## [0.1.1] - 2025-01-16
+
+### Added
+- <add new features>
+
+### Changed
+- <add changes>
+
+### Fixed
+- <add bug fixes>
+
 All notable changes to blnk will be documented in this file.
 
 ## [0.1.0] - 2024-01-16
