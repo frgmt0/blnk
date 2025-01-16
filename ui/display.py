@@ -17,28 +17,22 @@ class Display:
 
     def show_welcome(self):
         welcome_md = f"""
-╭──────────────────────────────────────────╮
-│                                          │
-│              Welcome to blnk             │
-│                                          │
-│      Your AI Terminal Companion          │
-│                                          │
-╰──────────────────────────────────────────╯
-
 blnk is a powerful terminal-based chat application that lets you seamlessly interact with multiple AI providers.
 
 **Available Commands:**
-• `/apis` - View available AI providers
-• `/use <api>` - Select your preferred AI
-• `/model-list` - Browse available models
-• `/help` - See all commands
+
+• `/apis` - View available AI providers\n
+• `/use <api>` - Select your preferred AI\n
+• `/model-list` - Browse available models\n
+• `/help` - See all commands\n
+
 
 To get started, try:
 ```
-/use anthropic
+/setup
 ```
 
-Made with ♥ by Jace
+Made with ♥ by frgmt0_o
 """
         welcome_panel = Panel(
             Markdown(welcome_md),
