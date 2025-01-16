@@ -42,4 +42,4 @@ Documentation = "https://github.com/yourusername/blnk#readme"
 "Bug Tracker" = "https://github.com/yourusername/blnk/issues"
 
 [project.scripts]
-blnk = "main:main"
+blnk = "blnk.main:run"
