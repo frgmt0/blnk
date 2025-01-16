@@ -14,20 +14,23 @@ class Display:
             "success": "green"
         })
         self.console = Console(theme=theme)
+        self.config_path = Path(__file__).parent.parent / "config" / "config.json"
 
     def show_welcome(self):
-        welcome_md = f"""
+        # Check if setup is completed
+        setup_completed = self.config_path.exists()
+        
+        if setup_completed:
+            welcome_md = f"""
+blnk is ready to chat! Type `/help` to see available commands.
+
+Made with ♥ by frgmt0_o
+"""
+        else:
+            welcome_md = f"""
 blnk is a powerful terminal-based chat application that lets you seamlessly interact with multiple AI providers.
 
-**Available Commands:**
-
-• `/apis` - View available AI providers\n
-• `/use <api>` - Select your preferred AI\n
-• `/model-list` - Browse available models\n
-• `/help` - See all commands\n
-
-
-To get started, try:
+To get started, run:
 ```
 /setup    # Configure your API providers and settings
 /help     # View all available commands
