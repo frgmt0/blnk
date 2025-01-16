@@ -5,7 +5,11 @@ from pathlib import Path
 class ConfigLoader:
     @staticmethod
     def load_config():
-        config_path = Path(__file__).parent.parent / "config" / "config.json"
+        # Create config directory in user's home
+        config_dir = Path.home() / ".blnk" / "config"
+        config_dir.mkdir(parents=True, exist_ok=True)
+        
+        config_path = config_dir / "config.json"
         
         # Create default config if it doesn't exist
         if not config_path.exists():

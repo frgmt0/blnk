@@ -6,8 +6,8 @@ from rich.console import Console
 
 class SetupManager:
     def __init__(self, config_path=None):
-        # Use project config directory
-        self.config_dir = Path(__file__).parent.parent / "config"
+        # Use user's home directory for config
+        self.config_dir = Path.home() / ".blnk" / "config"
         self.config_path = config_path or (self.config_dir / "config.json")
         self.valid_providers = ["anthropic", "openai", "gemini"]
         
