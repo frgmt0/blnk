@@ -114,6 +114,11 @@ class ChatManager:
             raise KeyboardInterrupt
         elif cmd == 'tools':
             return self.show_available_tools()
+        elif cmd == 'setup':
+            from utils.setup_manager import SetupManager
+            setup = SetupManager()
+            setup.run_setup()
+            return "Setup complete! Please restart blnk to apply changes."
 
         return f"Unknown command: {cmd}"
 

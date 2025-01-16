@@ -29,7 +29,8 @@ blnk is a powerful terminal-based chat application that lets you seamlessly inte
 
 To get started, try:
 ```
-/setup
+/setup    # Configure your API providers and settings
+/help     # View all available commands
 ```
 
 Made with ♥ by frgmt0_o
