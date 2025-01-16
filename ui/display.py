@@ -42,7 +42,18 @@ Type `/help` for detailed command information
         """Show response with optional streaming"""
         try:
             if isinstance(response, str):
-                md = Markdown(response)
+                # Check if response starts with "Tool:"
+                lines = response.split('\n')
+                formatted_lines = []
+                
+                for line in lines:
+                    if line.strip().startswith('Tool:'):
+                        # Format tool usage as subscript
+                        formatted_lines.append(f"<sub>{line}</sub>")
+                    else:
+                        formatted_lines.append(line)
+                        
+                md = Markdown('\n'.join(formatted_lines))
                 self.console.print(md)
             else:
                 # Handle streaming response
