@@ -5,6 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "blnk"
 version = "0.1.0"
+packages = ["src/blnk"]
 description = "A powerful terminal-based chat application for seamless interaction with multiple AI providers"
 readme = "README.md"
 requires-python = ">=3.13"
