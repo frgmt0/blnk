@@ -44,7 +44,7 @@ def update_version_files(new_version):
         f.write(content)
 
     # Update __init__.py
-    init_path = Path("src/blnk-chat/__init__.py")
+    init_path = Path("src/blnk_chat/__init__.py")
     with open(init_path, 'r') as f:
         content = f.read()
     content = re.sub(
