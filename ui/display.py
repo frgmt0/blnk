@@ -47,8 +47,8 @@ Type `/help` for detailed command information
                 formatted_lines = []
                 
                 for line in lines:
-                    if line.strip().startswith('Tool:'):
-                        # Keep tool usage as normal text
+                    # Skip bolding for any line containing tool-related content
+                    if 'Tool:' in line or 'Tool results:' in line:
                         formatted_lines.append(line)
                     else:
                         # Make regular output bold
