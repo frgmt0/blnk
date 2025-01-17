@@ -102,7 +102,7 @@ class SetupManager:
             env_vars[env_key] = api_key
 
         # Save API keys to .env
-        if self._save_env(env_vars):
+        if self._save_keys(env_vars):
             self.console.print("\n[green]✓[/green] API keys successfully saved to .env file")
         else:
             self.console.print("\n[red]✗[/red] Failed to save API keys. Please check file permissions and try again.")
