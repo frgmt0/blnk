@@ -19,13 +19,15 @@ async def main():
     # Initialize MCP tools
     await chat_manager.initialize_tools()
     
-    # Only register APIs with available keys
-    if os.getenv("OPENAI_API_KEY"):
-        chat_manager.register_api("openai", OpenAIAPI())
-    if os.getenv("ANTHROPIC_API_KEY"):
-        chat_manager.register_api("anthropic", AnthropicAPI())
-    if os.getenv("GOOGLE_API_KEY"):
-        chat_manager.register_api("gemini", GeminiAPI())
+    # Load config and register APIs with available keys
+    config = ConfigLoader.load_config()
+    if config and 'api_keys' in config:
+        if config['api_keys'].get('OPENAI_API_KEY'):
+            chat_manager.register_api("openai", OpenAIAPI())
+        if config['api_keys'].get('ANTHROPIC_API_KEY'):
+            chat_manager.register_api("anthropic", AnthropicAPI())
+        if config['api_keys'].get('GOOGLE_API_KEY'):
+            chat_manager.register_api("gemini", GeminiAPI())
                                                                                                                 
     display.show_welcome()                                                                                     
                                                                                                                 

@@ -29,8 +29,16 @@ class ConfigLoader:
                 with open(json_path) as f:
                     return json.load(f)
                     
-            print("No config found. Please run setup.")
-            return None
+            # Return empty config with api_keys dict to avoid None errors
+            return {
+                "default_api": "anthropic",
+                "api_keys": {},
+                "default_models": {
+                    "openai": "gpt-4o",
+                    "anthropic": "claude-3-5-sonnet-20241022",
+                    "gemini": "gemini-2.0-flash-exp"
+                }
+            }
             
         except Exception as e:
             print(f"Error loading config: {e}")

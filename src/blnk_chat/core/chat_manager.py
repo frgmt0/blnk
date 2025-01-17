@@ -70,7 +70,10 @@ class ChatManager:
                     ):
                         full_response += chunk
             return full_response
-        return "No API selected. Use /api <name> to select an API."
+        apis = self.show_available_apis()
+        if "No APIs configured" in apis:
+            return "No API keys configured. Please run '/setup' to configure your API keys."
+        return "No API selected. Use '/use <api>' to select an API. Available APIs:\n" + apis
                                                                                                             
     def handle_command(self, command):
         parts = command.split()
