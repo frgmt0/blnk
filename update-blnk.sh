@@ -12,8 +12,14 @@ cd "$(dirname "$0")"
 
 # Pull latest changes
 echo -e "\n${GREEN}Pulling latest changes...${NC}"
-if ! git pull; then
+if ! git remote get-url origin >/dev/null 2>&1; then
+    echo -e "\n${GREEN}Adding remote repository...${NC}"
+    git remote add origin https://github.com/frgmt0/blnk.git
+fi
+
+if ! git pull origin main; then
     echo -e "${RED}Failed to pull latest changes${NC}"
+    echo -e "Try: git branch --set-upstream-to=origin/main main"
     exit 1
 fi
 
