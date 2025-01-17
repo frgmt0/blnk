@@ -31,24 +31,35 @@ class SetupManager:
         with open(self.config_path, 'w') as f:
             json.dump(self.config, f, indent=4)
 
-    def _save_env(self, env_vars):
-        """Save API keys to config.json"""
+    def _save_keys(self, api_keys):
+        """Save API keys to config.yaml"""
         try:
-            # Load existing config
-            config = self._load_config() or {}
+            config_dir = Path.home() / ".blnk" / "config"
+            yaml_path = config_dir / "config.yaml"
             
-            # Add/update API keys
+            # Load existing config or use default
+            if yaml_path.exists():
+                with open(yaml_path) as f:
+                    config = yaml.safe_load(f)
+            else:
+                config = {
+                    'default_api': 'anthropic',
+                    'default_models': {
+                        'openai': 'gpt-4o',
+                        'anthropic': 'claude-3-5-sonnet-20241022',
+                        'gemini': 'gemini-2.0-flash-exp'
+                    },
+                    'api_keys': {}
+                }
+            
+            # Update API keys
             if 'api_keys' not in config:
                 config['api_keys'] = {}
-            config['api_keys'].update(env_vars)
+            config['api_keys'].update(api_keys)
 
             # Save updated config
-            with open(self.config_path, 'w') as f:
-                json.dump(config, f, indent=4)
-                
-            # Set environment variables
-            for key, value in env_vars.items():
-                os.environ[key] = value
+            with open(yaml_path, 'w') as f:
+                yaml.dump(config, f, default_flow_style=False)
                     
             return True
         except Exception as e:

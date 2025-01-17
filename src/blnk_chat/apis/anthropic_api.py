@@ -6,7 +6,8 @@ from ..config.models import ANTHROPIC_MODELS
 class AnthropicAPI(BaseAPI):
     def __init__(self):
         super().__init__()  # Initialize BaseAPI
-        self.client = AsyncAnthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
+        config = ConfigLoader.load_config()
+        self.client = AsyncAnthropic(api_key=config['api_keys'].get('ANTHROPIC_API_KEY'))
         self.model = ANTHROPIC_MODELS[0]
         
     async def send_message(self, message, tools=None):

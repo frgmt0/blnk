@@ -6,7 +6,8 @@ from ..config.models import OPENAI_MODELS
 class OpenAIAPI(BaseAPI):
     def __init__(self):
         super().__init__()  # Initialize BaseAPI
-        self.client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+        config = ConfigLoader.load_config()
+        self.client = OpenAI(api_key=config['api_keys'].get('OPENAI_API_KEY'))
         self.model = OPENAI_MODELS[0]
         
     async def send_message(self, message):
