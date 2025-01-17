@@ -2,7 +2,6 @@
 
 A powerful terminal-based chat application for seamless interaction with multiple AI providers.
 
-[![PyPI version](https://badge.fury.io/py/blnk-chat.svg)](https://badge.fury.io/py/blnk-chat)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## Features
@@ -13,30 +12,39 @@ A powerful terminal-based chat application for seamless interaction with multipl
 - MCP integration for advanced reasoning
 - Streaming responses with progress indicators
 - Command system with help documentation
-- Configurable setup with environment management
+- YAML configuration with automatic JSON conversion
+- Secure API key storage in user's home directory
 
 ## Installation
 
+Requires Python 3.13 or higher.
+
+1. Clone the repository:
 ```bash
-pip install blnk-chat
+git clone https://github.com/frgmt0/blnk.git
+cd blnk
 ```
 
-Requires Python 3.13 or higher.
+2. Run the installation script:
+```bash
+./install.sh
+```
+
+This will:
+- Create necessary config directories
+- Install dependencies
+- Set up the default configuration
+- Install blnk in development mode
 
 ## Quick Start
 
-1. Install blnk:
-```bash
-pip install blnk-chat
-```
-
-2. Run the setup command:
+1. Run the setup command to configure your API providers:
 ```bash
 blnk
 /setup
 ```
 
-3. Configure your API providers and settings following the prompts.
+2. Follow the prompts to configure your providers and API keys.
 
 ## Usage
 
@@ -59,19 +67,23 @@ blnk
 
 ```bash
 /use anthropic                               # Switch to Anthropic provider
-/switch-model claude-3-5-sonnet-20241022     # Switch to Claude 3 model
-/tools                                       # Show available tools
+/switch-model claude-3-5-sonnet-20241022    # Switch to Claude 3 model
+/tools                                      # Show available tools
 ```
 
 ## Configuration
 
-blnk-chat uses environment variables for API keys. Create a `.env` file in your project directory:
+blnk stores its configuration in `~/.blnk/config/`:
 
-```env
-OPENAI_API_KEY=your_openai_key
-ANTHROPIC_API_KEY=your_anthropic_key
-GOOGLE_API_KEY=your_google_key
-```
+- `config.yaml` - Main configuration file (edit this for changes)
+- `config.json` - Runtime configuration (automatically generated)
+
+The configuration includes:
+- Default API provider
+- Model preferences
+- API keys (securely stored)
+- Token limits
+- MCP settings
 
 ## Contributing
 
