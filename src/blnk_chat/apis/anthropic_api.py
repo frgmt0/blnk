@@ -70,12 +70,11 @@ class AnthropicAPI(BaseAPI):
             request["messages"] = messages
 
             # First count input tokens
-            token_count = await self.client.messages.count_tokens(
+            input_tokens = await self.client.count_tokens(
                 model=self.model,
                 messages=messages,
                 system=self.system_prompt + "\n\n" + self.style_prompt
             )
-            input_tokens = token_count.token_count
 
             # Stream the response
             async with self.client.messages.stream(**request) as stream:
@@ -86,13 +85,9 @@ class AnthropicAPI(BaseAPI):
                     total_text += text
                     if first_message:
                         try:
-                            # Get output token count from response metadata
-                            output_tokens = stream.usage.output_tokens if hasattr(stream, 'usage') else 0
-                            
-                            # Get cache stats if available
-                            usage = getattr(stream, 'usage', {}) or {}
-                            if not isinstance(usage, dict):
-                                usage = {}
+                            # Get usage stats from response metadata
+                            usage = stream.usage
+                            output_tokens = usage.output_tokens if usage else 0
                                 
                             cache_created = usage.get('cache_creation_input_tokens', 0) 
                             cache_read = usage.get('cache_read_input_tokens', 0)
