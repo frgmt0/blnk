@@ -4,6 +4,7 @@ from anthropic import AsyncAnthropic
 from .base_api import BaseAPI
 from ..config.models import ANTHROPIC_MODELS
 from ..utils.config_loader import ConfigLoader
+from ..utils.token_tracker import TokenTracker
 
 class AnthropicAPI(BaseAPI):
     def __init__(self):
@@ -11,6 +12,7 @@ class AnthropicAPI(BaseAPI):
         config = ConfigLoader.load_config()
         self.client = AsyncAnthropic(api_key=config['api_keys'].get('ANTHROPIC_API_KEY'))
         self.model = ANTHROPIC_MODELS[0]
+        self.token_tracker = TokenTracker()
         
     async def send_message(self, message, tools=None):
         """Send a message to the Anthropic API with prompt caching
@@ -73,19 +75,25 @@ class AnthropicAPI(BaseAPI):
                 first_message = True
                 async for text in stream.text_stream:
                     if first_message and hasattr(stream, 'usage'):
-                        # Log cache performance metrics
+                        # Track token usage
                         usage = stream.usage
+                        input_tokens = usage.get('input_tokens', 0)
+                        output_tokens = usage.get('output_tokens', 0)
                         cache_created = usage.get('cache_creation_input_tokens', 0)
                         cache_read = usage.get('cache_read_input_tokens', 0)
-                        regular_input = usage.get('input_tokens', 0)
-                        
-                        if cache_created:
-                            print(f"Created cache entry with {cache_created} tokens")
-                        elif cache_read:
-                            print(f"Read {cache_read} tokens from cache")
-                        first_message = False
                     
+                        self.token_tracker.add_message(
+                            input_tokens=input_tokens,
+                            output_tokens=output_tokens,
+                            cache_created=cache_created,
+                            cache_read=cache_read
+                        )
+                        first_message = False
+                
                     yield text
+                
+                # After message completion, yield token stats
+                yield "\n" + self.token_tracker.format_stats()
         except Exception as e:
             yield f"Anthropic API Error: {str(e)}"
             
