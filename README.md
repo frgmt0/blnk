@@ -2,7 +2,7 @@
 
 A powerful terminal-based chat application for seamless interaction with multiple AI providers.
 
-[![PyPI version](https://badge.fury.io/py/blnk.svg)](https://badge.fury.io/py/blnk)
+[![PyPI version](https://badge.fury.io/py/blnk-chat.svg)](https://badge.fury.io/py/blnk-chat)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## Features
