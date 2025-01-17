@@ -1,4 +1,5 @@
 import os
+import json
 from anthropic import AsyncAnthropic
 from .base_api import BaseAPI
 from ..config.models import ANTHROPIC_MODELS
@@ -12,29 +13,78 @@ class AnthropicAPI(BaseAPI):
         self.model = ANTHROPIC_MODELS[0]
         
     async def send_message(self, message, tools=None):
-        """Send a message to the Anthropic API
+        """Send a message to the Anthropic API with prompt caching
         
         Args:
             message: The user message
             tools: Optional list of available tools
         """
         try:
-            # Combine system and style prompts
-            system = self.system_prompt + "\n\n" + self.style_prompt
+            # Build the request structure in the correct order for caching:
+            # 1. Tools (if any)
+            # 2. System messages
+            # 3. Conversation messages
             
-            messages = [{"role": "user", "content": message}]
+            request = {
+                "model": self.model,
+                "max_tokens": 1000,
+                "messages": []
+            }
             
-            # If tools were used, append their results to the message
+            # 1. Add tools if provided
+            if tools:
+                request["tools"] = [{
+                    "type": "text",
+                    "text": json.dumps(tools),
+                    "cache_control": {"type": "ephemeral"}
+                }]
+                
+            # 2. Add system messages - these should be cached as they're stable
+            system_content = [{
+                "type": "text",
+                "text": self.system_prompt + "\n\n" + self.style_prompt,
+                "cache_control": {"type": "ephemeral"}  # Will be cached for 5 minutes
+            }]
+            
+            # Only enable caching if the system prompt is long enough
+            # (minimum 1024 tokens for Sonnet/Opus, 2048 for Haiku)
+            if len(self.system_prompt + self.style_prompt) > 1024:  # Simple approximation
+                request["system"] = system_content
+                
+            # 3. Add conversation messages
+            messages = []
+            
+            # If there are tool results, add them as a separate message
             if isinstance(message, str) and "Tool results:" in message:
+                parts = message.split("Tool results:")
+                messages.extend([
+                    {"role": "user", "content": parts[0].strip()},
+                    {"role": "assistant", "content": "Let me process those tool results."},
+                    {"role": "user", "content": f"Tool results: {parts[1].strip()}"}
+                ])
+            else:
                 messages.append({"role": "user", "content": message})
-            
-            async with self.client.messages.stream(
-                model=self.model,
-                max_tokens=1000,
-                messages=messages,
-                system=system
-            ) as stream:
+                
+            request["messages"] = messages
+
+            # Stream the response
+            async with self.client.messages.stream(**request) as stream:
+                # Check cache performance from the first message
+                first_message = True
                 async for text in stream.text_stream:
+                    if first_message and hasattr(stream, 'usage'):
+                        # Log cache performance metrics
+                        usage = stream.usage
+                        cache_created = usage.get('cache_creation_input_tokens', 0)
+                        cache_read = usage.get('cache_read_input_tokens', 0)
+                        regular_input = usage.get('input_tokens', 0)
+                        
+                        if cache_created:
+                            print(f"Created cache entry with {cache_created} tokens")
+                        elif cache_read:
+                            print(f"Read {cache_read} tokens from cache")
+                        first_message = False
+                    
                     yield text
         except Exception as e:
             yield f"Anthropic API Error: {str(e)}"
