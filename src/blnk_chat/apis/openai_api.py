@@ -2,6 +2,7 @@ import os
 from openai import OpenAI
 from .base_api import BaseAPI
 from ..config.models import OPENAI_MODELS
+from ..utils.config_loader import ConfigLoader
 
 class OpenAIAPI(BaseAPI):
     def __init__(self):
