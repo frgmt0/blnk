@@ -16,8 +16,15 @@ if [ ! -f ~/.blnk/config/mcp/default.json ]; then
 {
     "server": {
         "command": "node",
-        "args": ["mcp-reasoner/dist/index.js"],
-        "env": {}
+        "args": ["$(npm root -g)/mcp-reasoner/dist/index.js"],
+        "env": {
+            "NODE_ENV": "production",
+            "MCP_LOG_LEVEL": "info"
+        }
+    },
+    "tools": {
+        "enabled": ["*"],
+        "disabled": []
     }
 }
 EOL
