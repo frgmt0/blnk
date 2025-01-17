@@ -70,7 +70,7 @@ class AnthropicAPI(BaseAPI):
             request["messages"] = messages
 
             # First count input tokens
-            input_tokens = await self.client.count_tokens(
+            input_tokens = await self.client.messages.count(
                 model=self.model,
                 messages=messages,
                 system=self.system_prompt + "\n\n" + self.style_prompt
