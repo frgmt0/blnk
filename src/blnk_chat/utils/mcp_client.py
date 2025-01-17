@@ -6,19 +6,32 @@ from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
 
 class MCPClient:
-    def __init__(self):
-        config_path = Path(__file__).parent.parent / "config" / "blnk_mcp_config.json"
-        with open(config_path) as f:
-            self.config = json.load(f)
+    def __init__(self, server_name="default"):
+        self.config_dir = Path.home() / ".blnk" / "config" / "mcp"
+        self.server_name = server_name
+        self.config = self._load_config()
+        
+        if self.config:
+            self.server_params = StdioServerParameters(
+                command=self.config["server"]["command"],
+                args=self.config["server"]["args"],
+                env=self.config["server"].get("env", {})
+            )
+        else:
+            raise ValueError(f"MCP server config '{server_name}' not found")
             
-        self.server_params = StdioServerParameters(
-            command=self.config["server"]["command"],
-            args=self.config["server"]["args"],
-            env=self.config["server"]["env"]
-        )
         self.tools = []
         self._client = None
         self._session = None
+        
+    def _load_config(self):
+        """Load MCP server configuration"""
+        config_path = self.config_dir / f"{self.server_name}.json"
+        try:
+            with open(config_path) as f:
+                return json.load(f)
+        except FileNotFoundError:
+            return None
         
     @asynccontextmanager
     async def get_session(self):

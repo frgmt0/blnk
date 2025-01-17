@@ -77,6 +77,25 @@ blnk stores its configuration in `~/.blnk/config/`:
 
 - `config.yaml` - Main configuration file (edit this for changes)
 - `config.json` - Runtime configuration (automatically generated)
+- `mcp/*.json` - MCP server configurations
+
+### MCP Integration
+
+blnk supports integration with MCP (Machine Cognition Protocol) servers. While native MCP-reasoner support is planned for future releases, you can already configure and use MCP servers:
+
+1. Create a JSON config file in `~/.blnk/config/mcp/` (e.g., `default.json`)
+2. Configure the server details:
+```json
+{
+    "server": {
+        "command": "node",
+        "args": ["path/to/mcp-reasoner/dist/index.js"],
+        "env": {}
+    }
+}
+```
+
+Multiple MCP servers can be configured by creating additional JSON files in the `mcp/` directory.
 
 The configuration includes:
 - Default API provider

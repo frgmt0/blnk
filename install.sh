@@ -7,6 +7,22 @@ mkdir -p ~/.blnk/config
 pip install --user -r requirements.txt
 pip install --user .
 
+# Create configs directory if it doesn't exist
+mkdir -p ~/.blnk/config/mcp
+
+# Copy default MCP config if it doesn't exist
+if [ ! -f ~/.blnk/config/mcp/default.json ]; then
+    cat > ~/.blnk/config/mcp/default.json << EOL
+{
+    "server": {
+        "command": "node",
+        "args": ["mcp-reasoner/dist/index.js"],
+        "env": {}
+    }
+}
+EOL
+fi
+
 # Create default config if it doesn't exist
 if [ ! -f ~/.blnk/config/config.yaml ]; then
     cat > ~/.blnk/config/config.yaml << EOL
