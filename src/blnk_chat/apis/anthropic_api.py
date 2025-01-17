@@ -4,7 +4,6 @@ from anthropic import AsyncAnthropic
 from .base_api import BaseAPI
 from ..config.models import ANTHROPIC_MODELS
 from ..utils.config_loader import ConfigLoader
-from ..utils.token_tracker import TokenTracker
 
 class AnthropicAPI(BaseAPI):
     def __init__(self):
@@ -12,7 +11,6 @@ class AnthropicAPI(BaseAPI):
         config = ConfigLoader.load_config()
         self.client = AsyncAnthropic(api_key=config['api_keys'].get('ANTHROPIC_API_KEY'))
         self.model = ANTHROPIC_MODELS[0]
-        self.token_tracker = TokenTracker()
         
     async def send_message(self, message, tools=None):
         """Send a message to the Anthropic API with prompt caching
@@ -69,48 +67,10 @@ class AnthropicAPI(BaseAPI):
                 
             request["messages"] = messages
 
-            # First count input tokens
-            input_tokens = await self.client.messages.count(
-                model=self.model,
-                messages=messages,
-                system=self.system_prompt + "\n\n" + self.style_prompt
-            )
-
             # Stream the response
             async with self.client.messages.stream(**request) as stream:
-                # Track token usage and cache performance
-                first_message = True
-                total_text = ""
                 async for text in stream.text_stream:
-                    total_text += text
-                    if first_message:
-                        try:
-                            # Get usage stats from response metadata
-                            usage = stream.usage
-                            output_tokens = usage.output_tokens if usage else 0
-                                
-                            cache_created = usage.get('cache_creation_input_tokens', 0) 
-                            cache_read = usage.get('cache_read_input_tokens', 0)
-                            
-                            # Calculate cache hit rate
-                            total_input = input_tokens + cache_created + cache_read
-                            cache_hit_rate = (cache_read / total_input * 100) if total_input > 0 else 0
-                            
-                            self.token_tracker.add_message(
-                                input_tokens=input_tokens,
-                                output_tokens=output_tokens,
-                                cache_created=cache_created,
-                                cache_read=cache_read,
-                                cache_hit_rate=cache_hit_rate
-                            )
-                        except Exception as e:
-                            print(f"Warning: Failed to track tokens: {str(e)}")
-                        first_message = False
-                
                     yield text
-                
-                # After message completion, yield token stats
-                yield "\n" + self.token_tracker.format_stats()
         except Exception as e:
             yield f"Anthropic API Error: {str(e)}"
             
