@@ -71,23 +71,37 @@ class AnthropicAPI(BaseAPI):
 
             # Stream the response
             async with self.client.messages.stream(**request) as stream:
-                # Check cache performance from the first message
+                # Track token usage and cache performance
                 first_message = True
+                total_text = ""
                 async for text in stream.text_stream:
-                    if first_message and hasattr(stream, 'usage'):
-                        # Track token usage
-                        usage = stream.usage
-                        input_tokens = usage.get('input_tokens', 0)
-                        output_tokens = usage.get('output_tokens', 0)
-                        cache_created = usage.get('cache_creation_input_tokens', 0)
-                        cache_read = usage.get('cache_read_input_tokens', 0)
-                    
-                        self.token_tracker.add_message(
-                            input_tokens=input_tokens,
-                            output_tokens=output_tokens,
-                            cache_created=cache_created,
-                            cache_read=cache_read
-                        )
+                    total_text += text
+                    if first_message:
+                        try:
+                            # Get usage stats if available
+                            usage = getattr(stream, 'usage', {}) or {}
+                            if not isinstance(usage, dict):
+                                usage = {}
+                                
+                            # Extract token counts with defaults
+                            input_tokens = usage.get('input_tokens', 0)
+                            output_tokens = usage.get('output_tokens', 0)
+                            cache_created = usage.get('cache_creation_input_tokens', 0) 
+                            cache_read = usage.get('cache_read_input_tokens', 0)
+                            
+                            # Calculate cache hit rate
+                            total_input = input_tokens + cache_created + cache_read
+                            cache_hit_rate = (cache_read / total_input * 100) if total_input > 0 else 0
+                            
+                            self.token_tracker.add_message(
+                                input_tokens=input_tokens,
+                                output_tokens=output_tokens,
+                                cache_created=cache_created,
+                                cache_read=cache_read,
+                                cache_hit_rate=cache_hit_rate
+                            )
+                        except Exception as e:
+                            print(f"Warning: Failed to track tokens: {str(e)}")
                         first_message = False
                 
                     yield text
