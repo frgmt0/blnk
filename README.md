@@ -81,7 +81,7 @@ blnk stores its configuration in `~/.blnk/config/`:
 
 ### MCP Integration
 
-blnk supports integration with MCP (Machine Cognition Protocol) servers. While native MCP-reasoner support is planned for future releases, you can already configure and use MCP servers:
+blnk supports integration with MCP (Model Context Protocol) servers. While native MCP-reasoner support is planned for future releases, you can already configure and use MCP servers:
 
 1. Create a JSON config file in `~/.blnk/config/mcp/` (e.g., `default.json`)
 2. Configure the server details:

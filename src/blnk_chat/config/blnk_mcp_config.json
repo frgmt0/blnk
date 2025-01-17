@@ -1,7 +1,0 @@
-{
-    "server": {
-        "command": "/opt/homebrew/bin/node",
-        "args": ["/Users/jace/mcp/mcp-reasoner/dist/index.js"],
-        "env": {}
-    }
-}
