@@ -7,9 +7,10 @@ from .apis.openai_api import OpenAIAPI
 from .apis.anthropic_api import AnthropicAPI
 from .apis.gemini_api import GeminiAPI
 from .utils.config_loader import ConfigLoader
-                                                                                                                
-async def main():                                                                                                    
-    init()  # Initialize colorama                                                                              
+
+async def main():
+    init()
+    # Initialize colorama
     display = Display()
     
     # Load configuration
@@ -28,22 +29,18 @@ async def main():
             chat_manager.register_api("anthropic", AnthropicAPI())
         if config['api_keys'].get('GOOGLE_API_KEY'):
             chat_manager.register_api("gemini", GeminiAPI())
-                                                                                                                
-    display.show_welcome()                                                                                     
-                                                                                                                
-    while True:                                                                                                
-        try:                                                                                                   
+        
+    display.show_welcome()                                      
+    while True:
+        try:   
             user_input = display.show_input_prompt()
-            if user_input.lower() == 'exit':                                                                   
-                break                                                                                          
-                                                                                                                
-            response = await chat_manager.process_input(user_input)                                                  
-            await display.show_response(response)                                                                    
-                                                                                                                
+            if user_input.lower() == 'exit':
+                break
+            response = await chat_manager.process_input(user_input)
+            await display.show_response(response)
         except KeyboardInterrupt:                                                                              
-            print("\nGoodbye!")                                                                                
-            break                                                                                              
-                                                                                                                
+            print("\nGoodbye!")
+            break
 def run():
     """Entry point for the application."""
     asyncio.run(main())
